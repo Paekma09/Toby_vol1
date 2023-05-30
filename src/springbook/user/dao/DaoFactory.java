@@ -6,7 +6,7 @@ public class DaoFactory {
     }
 
     public AccountDao accountDao(){
-        return new AccountDoa(connectionMaker());
+        return new AccountDao(connectionMaker());
     }
 
     public MessageDao messageDao(){
