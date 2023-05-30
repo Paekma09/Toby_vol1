@@ -11,10 +11,12 @@ public class DaoFactory {
         return new UserDao(connectionMaker());
     }
 
+
     @Bean
     public AccountDao accountDao(){
         return new AccountDao(connectionMaker());
     }
+
 
     @Bean
     public MessageDao messageDao(){
