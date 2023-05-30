@@ -1,0 +1,22 @@
+plugins{
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+dependencies {
+    implementation 'cglib:cglib-full:2.0.2'
+    testImplementation 'junit:junit:4.13'
+    implementation 'org.springframework:spring-context:5.2.19.RELEASE'
+}
