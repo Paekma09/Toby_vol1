@@ -12,9 +12,19 @@ public class UserDao {
     private ConnectionMaker connectionMaker;
     // UserDao 오브젝트는 이제 생성자를 통해 주입받은 DConnectionMaker 오브젝트를 언제든지 사용하면 된다.
     // 반드시 인터페이스 타입의 파라미터 이어야만 한다.
+
+    /*
+    // 생성자를 이용한 의존관계 주입
     public UserDao(ConnectionMaker connectionMaker){
         this.connectionMaker = connectionMaker;
     }
+    */
+
+    // 수정자 메소드를 이용한 의존관계 주입
+    public void setConnectionMaker(ConnectionMaker connectionMaker){
+        this.connectionMaker = connectionMaker;
+    }
+
     /*
     // DaoFactory 를 이용하는 생성자
     public UserDao(){
