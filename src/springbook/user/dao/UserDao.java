@@ -2,6 +2,7 @@ package springbook.user.dao;
 
 import springbook.user.domain.User;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,9 +10,11 @@ import java.sql.SQLException;
 
 public class UserDao {
     // 생성자 파라미터를 통해 전달 받은 런타임 의존관계를 갖는 오브젝트는 인스턴스 변수에 저장해둔다.
-    private ConnectionMaker connectionMaker;
+    // private ConnectionMaker connectionMaker;
     // UserDao 오브젝트는 이제 생성자를 통해 주입받은 DConnectionMaker 오브젝트를 언제든지 사용하면 된다.
     // 반드시 인터페이스 타입의 파라미터 이어야만 한다.
+
+    private DataSource dataSource;
 
     /*
     // 생성자를 이용한 의존관계 주입
@@ -21,8 +24,12 @@ public class UserDao {
     */
 
     // 수정자 메소드를 이용한 의존관계 주입
-    public void setConnectionMaker(ConnectionMaker connectionMaker){
-        this.connectionMaker = connectionMaker;
+//    public void setConnectionMaker(ConnectionMaker connectionMaker){
+//        this.connectionMaker = connectionMaker;
+//    }
+
+    public void setDataSource(DataSource dataSource){
+        this.dataSource = dataSource;
     }
 
     /*
@@ -41,8 +48,9 @@ public class UserDao {
     }
     */
 
-    public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+    public void add(User user) throws SQLException {
+        // Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
         ps.setString(1, user.getId());
@@ -55,8 +63,9 @@ public class UserDao {
         c.close();
     }
 
-    public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+    public User get(String id) throws SQLException {
+        // Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from users where id = ?");
         ps.setString(1, id);

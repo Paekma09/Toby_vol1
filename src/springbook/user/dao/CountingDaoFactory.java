@@ -15,12 +15,12 @@ public class CountingDaoFactory {
     */
 
     // 수정자를 이용한 의존관계 주입
-    @Bean
-    public UserDao userDao(){
-        UserDao userDao = new UserDao();
-        userDao.setConnectionMaker(connectionMaker());
-        return userDao;
-    }
+//    @Bean
+//    public UserDao userDao(){
+//        UserDao userDao = new UserDao();
+//        userDao.setConnectionMaker(connectionMaker());
+//        return userDao;
+//    }
 
     @Bean
     public ConnectionMaker connectionMaker(){
