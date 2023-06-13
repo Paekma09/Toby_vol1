@@ -1,7 +1,7 @@
 package springbook.user.dao;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import springbook.user.domain.User;
 
 import java.sql.SQLException;
@@ -9,10 +9,10 @@ import java.sql.SQLException;
 public class UserDaoTest {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         // static 메소드인 main() 에서는 DI를 이용해 오브젝트를 주입받을 방법이 없기 때문에 의존관계 검색 방식을 사용
-        //ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
 
         // xml 이용하여 의존 관계 주입
-        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+        // ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
 
         UserDao dao = context.getBean("userDao", UserDao.class);
 
