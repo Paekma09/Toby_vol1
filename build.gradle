@@ -17,6 +17,7 @@ sourceSets {
 }
 dependencies {
     implementation 'cglib:cglib-full:2.0.2'
+    implementation 'junit:junit:4.13.1'
     testImplementation 'junit:junit:4.13'
     implementation 'org.springframework:spring-context:5.2.19.RELEASE'
     implementation 'org.springframework:spring-jdbc:5.2.2.RELEASE'
