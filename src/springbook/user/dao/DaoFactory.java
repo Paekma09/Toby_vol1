@@ -37,16 +37,16 @@ public class DaoFactory {
 //        return new MessageDao(connectionMaker());
 //    }
 
-    @Bean
-    public AccountDao accountDao(){
-        return new AccountDao(connectionMaker());
-    }
+//    @Bean
+//    public AccountDao accountDao(){
+//        return new AccountDao(connectionMaker());
+//    }
 
 
-    @Bean
-    public MessageDao messageDao(){
-        return new MessageDao(connectionMaker());
-    }
+//    @Bean
+//    public MessageDao messageDao(){
+//        return new MessageDao(connectionMaker());
+//    }
 
     // ConnectionMaker 타입의 오브젝트를 결정하고 이를 생성한 후에 UserDao의 생성자 파라미터로 주입
 //    @Bean
