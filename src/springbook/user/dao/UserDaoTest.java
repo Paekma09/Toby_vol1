@@ -1,5 +1,6 @@
 package springbook.user.dao;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.springframework.context.ApplicationContext;
@@ -14,18 +15,32 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UserDaoTest {
 
+    private UserDao dao;
+    private User user1;
+    private User user2;
+    private User user3;
+
+    @Before
+    public void setUp() {
+        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+        this.dao = context.getBean("userDao", UserDao.class);
+        this.user1 = new User("paekma09", "남기준", "KHS0909");
+        this.user2 = new User("ksh0909", "강성희", "kj1116");
+        this.user3 = new User("kjsh09", "기준성희", "79840908");
+    }
+
     @Test
     public void addAndGet() throws SQLException {
         // static 메소드인 main() 에서는 DI를 이용해 오브젝트를 주입받을 방법이 없기 때문에 의존관계 검색 방식을 사용
         // ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
 
         // xml 이용하여 의존 관계 주입
-         ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+//        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+//
+//        UserDao dao = context.getBean("userDao", UserDao.class);
 
-        UserDao dao = context.getBean("userDao", UserDao.class);
-
-        User user1 = new User("paekma09", "남기준", "KHS0909");
-        User user2 = new User("ksh0909", "강성희", "kj1116");
+//        User user1 = new User("paekma09", "남기준", "KHS0909");
+//        User user2 = new User("ksh0909", "강성희", "kj1116");
 
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
@@ -71,12 +86,12 @@ public class UserDaoTest {
 
     @Test
     public void count() throws SQLException {
-        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-
-        UserDao dao = context.getBean("userDao", UserDao.class);
-        User user1 = new User("paekma09", "남기준", "KSH0909");
-        User user2 = new User("ksh0909", "강성희", "kj1116");
-        User user3 = new User("kjsh09", "기준성희", "79840908");
+//        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+//
+//        UserDao dao = context.getBean("userDao", UserDao.class);
+//        User user1 = new User("paekma09", "남기준", "KSH0909");
+//        User user2 = new User("ksh0909", "강성희", "kj1116");
+//        User user3 = new User("kjsh09", "기준성희", "79840908");
 
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
@@ -93,9 +108,9 @@ public class UserDaoTest {
 
     @Test(expected = EmptyResultDataAccessException.class) // 테스트 중에 발생할 것으로 기대하는 예외 클래스를 지정 해준다.
     public void getUserFailure() throws SQLException {
-        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-
-        UserDao dao = context.getBean("userDao", UserDao.class);
+//        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+//
+//        UserDao dao = context.getBean("userDao", UserDao.class);
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
 
