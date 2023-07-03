@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/junit.xml")
+@ContextConfiguration("classpath:/springbook/learningtest/junit/junit.xml")
 public class JUnitTest {
 
     @Autowired
