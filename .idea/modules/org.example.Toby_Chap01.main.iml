@@ -7,15 +7,20 @@
   </component>
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
-      <configuration>
-        <fileset id="fileset" name="Junit" removed="false">
-          <file>file://$MODULE_DIR$/../../src/springbook/learningtest/junit/junit.xml</file>
-        </fileset>
+      <configuration process_explicitly_annotated="true">
+        <fileset id="fileset" name="Junit" removed="false" />
         <fileset id="fileset2" name="ApplicationContext" removed="false">
           <file>file://$MODULE_DIR$/../../src/applicationContext.xml</file>
         </fileset>
         <fileset id="fileset3" name="Test ApplicationContext" removed="false">
           <file>file://$MODULE_DIR$/../../src/test-applicationContext.xml</file>
+        </fileset>
+        <fileset id="fileset4" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/../../src/main/resources/junit.xml</file>
+        </fileset>
+        <fileset id="fileset5" name="Spring Application Context (2)" removed="false">
+          <file>file://$MODULE_DIR$/../../src/springbook/user/dao/CountingDaoFactory.java</file>
+          <file>file://$MODULE_DIR$/../../src/springbook/user/dao/DaoFactory.java</file>
         </fileset>
       </configuration>
     </facet>
