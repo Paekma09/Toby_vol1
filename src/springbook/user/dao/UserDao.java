@@ -50,7 +50,13 @@ public class UserDao {
     }
     */
 
-//    public void add(User user) throws SQLException {
+    private JdbcContext jdbcContext;
+
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
+    }
+
+    //    public void add(User user) throws SQLException {
 //        // Connection c = connectionMaker.makeConnection();
 //        Connection c = dataSource.getConnection();
 //
@@ -99,7 +105,22 @@ public class UserDao {
 
 
         // AddStatement 클래스를 익명 내부 클래스로 이전 (jdbcContextWithStatementStrategy()메소드의 파라미터에서 바로 생성)
-        jdbcContextWithStatementStrategy(
+//        jdbcContextWithStatementStrategy(
+//                new StatementStrategy() {
+//                    @Override
+//                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                        PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values (?,?,?)");
+//                        ps.setString(1, user.getId());
+//                        ps.setString(2, user.getName());
+//                        ps.setString(3, user.getPassword());
+//
+//                        return ps;
+//                    }
+//                }
+//        );
+
+        // jdbcContext()를 공통의 클래스로 이전하고 JdbcContext 클래스를 DI 받아 사용
+        this.jdbcContext.workWithStatementStrategy(
                 new StatementStrategy() {
                     @Override
                     public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
@@ -245,6 +266,18 @@ public class UserDao {
                 }
         );
     }
+
+    // jdbcContext()를 공통의 클래스로 이전하고 JdbcContext 클래스를 DI 받아 사용
+//    public void deleteAll() throws SQLException {
+//        this.jdbcContext.workWithStatementStrategy(
+//                new StatementStrategy() {
+//                    @Override
+//                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                        return c.prepareStatement("delete from users");
+//                    }
+//                }
+//        );
+//    }
 
 
     public int getCount() throws SQLException {
