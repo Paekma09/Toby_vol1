@@ -67,9 +67,51 @@ public class UserDao {
 
     // DI 적용을 위한 클라이언트 / 컨텍스트 분리 ----[S]
     // 컨텍스트
-    public void add(User user) throws SQLException {
-        StatementStrategy st = new AddStatement(user);
-        jdbcContextWithStatementStrategy(st);
+    public void add(final User user) throws SQLException {
+        // AddStatement 클래스를 로컬 클래스로 이전
+//        class AddStatement implements StatementStrategy {
+//
+//            @Override
+//            public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values (?,?,?)");
+//                ps.setString(1, user.getId());
+//                ps.setString(2, user.getName());
+//                ps.setString(3, user.getPassword());
+//
+//                return ps;
+//            }
+//        }
+
+        // AddStatement 클래스를 익명 내부 클래스로 이전
+//        StatementStrategy st = new StatementStrategy() {
+//            @Override
+//            public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values (?,?,?)");
+//                ps.setString(1, user.getId());
+//                ps.setString(2, user.getName());
+//                ps.setString(3, user.getPassword());
+//
+//                return ps;
+//            }
+//        };
+////        StatementStrategy st = new AddStatement();
+//        jdbcContextWithStatementStrategy(st);
+
+
+        // AddStatement 클래스를 익명 내부 클래스로 이전 (jdbcContextWithStatementStrategy()메소드의 파라미터에서 바로 생성)
+        jdbcContextWithStatementStrategy(
+                new StatementStrategy() {
+                    @Override
+                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+                        PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values (?,?,?)");
+                        ps.setString(1, user.getId());
+                        ps.setString(2, user.getName());
+                        ps.setString(3, user.getPassword());
+
+                        return ps;
+                    }
+                }
+        );
     }
     // DI 적용을 위한 클라이언트 / 컨텍스트 분리 ----[E]
 
@@ -186,11 +228,23 @@ public class UserDao {
     }
 
     // 클라이언트
-    public void deleteAll() throws SQLException {
-        StatementStrategy st = new DeleteAllStatement();    //선정한 전략 클래스의 오브젝트 생성
-        jdbcContextWithStatementStrategy(st);   //컨텍스트 호출, 전략 오브젝트 전달
-    }
+//    public void deleteAll() throws SQLException {
+//        StatementStrategy st = new DeleteAllStatement();    //선정한 전략 클래스의 오브젝트 생성
+//        jdbcContextWithStatementStrategy(st);   //컨텍스트 호출, 전략 오브젝트 전달
+//    }
     // DI 적용을 위한 클라이언트 / 컨텍스트 분리 ----[E]
+
+    // DeleteAllStatement 클래스를 익명 내부 클래스로 이전 (jdbcContextWithStatementStrategy()메소드의 파라미터에서 바로 생성)
+    public void deleteAll() throws SQLException {
+        jdbcContextWithStatementStrategy(
+                new StatementStrategy() {
+                    @Override
+                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+                        return c.prepareStatement("delete from users");
+                    }
+                }
+        );
+    }
 
 
     public int getCount() throws SQLException {
