@@ -12,7 +12,8 @@ public class JdbcContext {
         this.dataSource = dataSource;
     }
 
-    public void workWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+
+    public void workWithStatementStrategy(StatementStrategy stmt) throws SQLException { //StatementStrategy stmt -> 클라이언트가 컨텍스트를 호출할 때 넘겨줄 전략 파라미터
         Connection c = null;
         PreparedStatement ps = null;
 
