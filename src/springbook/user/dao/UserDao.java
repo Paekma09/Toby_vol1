@@ -30,8 +30,10 @@ public class UserDao {
 //        this.connectionMaker = connectionMaker;
 //    }
 
-    public void setDataSource(DataSource dataSource){
-        this.dataSource = dataSource;
+    public void setDataSource(DataSource dataSource){   // 수정자 메소드이면서 JdbcContext 에 대한 생성, DI 작업을 동시에 수행한다.
+        this.jdbcContext = new JdbcContext();   // JdbcContext 생성 (IoC)
+        this.jdbcContext.setDataSource(dataSource); // 의존 오브젝트 주입(DI)
+        this.dataSource = dataSource;   // 아직 JdbcContext 를 적용하지 않은 메소드를 위해 저장해 둔다.
     }
 
     /*
@@ -49,7 +51,7 @@ public class UserDao {
         this.connectionMaker = context.getBean("connectionMaker", ConnectionMaker.class);
     }
     */
-
+    private JdbcContext jdbcContext;
 //    public void add(User user) throws SQLException {
 //        // Connection c = connectionMaker.makeConnection();
 //        Connection c = dataSource.getConnection();
@@ -99,7 +101,21 @@ public class UserDao {
 
 
         // AddStatement 클래스를 익명 내부 클래스로 이전 (jdbcContextWithStatementStrategy()메소드의 파라미터에서 바로 생성)
-        jdbcContextWithStatementStrategy(
+//        jdbcContextWithStatementStrategy(
+//                new StatementStrategy() {
+//                    @Override
+//                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                        PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values (?,?,?)");
+//                        ps.setString(1, user.getId());
+//                        ps.setString(2, user.getName());
+//                        ps.setString(3, user.getPassword());
+//
+//                        return ps;
+//                    }
+//                }
+//        );
+
+        this.jdbcContext.workWithStatementStrategy(
                 new StatementStrategy() {
                     @Override
                     public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
@@ -201,31 +217,31 @@ public class UserDao {
 
     // DI 적용을 위한 클라이언트 / 컨텍스트 분리 ----[S]
     // 컨텍스트
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException { //StatementStrategy stmt -> 클라이언트가 컨텍스트를 호출할 때 넘겨줄 전략 파라미터
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = stmt.makePrepareStatement(c);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
+//    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException { //StatementStrategy stmt -> 클라이언트가 컨텍스트를 호출할 때 넘겨줄 전략 파라미터
+//        Connection c = null;
+//        PreparedStatement ps = null;
+//
+//        try {
+//            c = dataSource.getConnection();
+//            ps = stmt.makePrepareStatement(c);
+//            ps.executeUpdate();
+//        } catch (SQLException e) {
+//            throw e;
+//        } finally {
+//            if (ps != null) {
+//                try {
+//                    ps.close();
+//                } catch (SQLException e) {
+//                }
+//            }
+//            if (c != null) {
+//                try {
+//                    c.close();
+//                } catch (SQLException e) {
+//                }
+//            }
+//        }
+//    }
 
     // 클라이언트
 //    public void deleteAll() throws SQLException {
@@ -236,7 +252,15 @@ public class UserDao {
 
     // DeleteAllStatement 클래스를 익명 내부 클래스로 이전 (jdbcContextWithStatementStrategy()메소드의 파라미터에서 바로 생성)
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(
+//        jdbcContextWithStatementStrategy(
+//                new StatementStrategy() {
+//                    @Override
+//                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                        return c.prepareStatement("delete from users");
+//                    }
+//                }
+//        );
+        this.jdbcContext.workWithStatementStrategy(
                 new StatementStrategy() {
                     @Override
                     public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
