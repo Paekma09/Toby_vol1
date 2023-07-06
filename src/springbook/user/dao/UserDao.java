@@ -261,15 +261,29 @@ public class UserDao {
 //                    }
 //                }
 //        );
-        this.jdbcContext.workWithStatementStrategy(
-                new StatementStrategy() {
-                    @Override
-                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
-                        return c.prepareStatement("delete from users");
-                    }
-                }
-        );
+//        this.jdbcContext.workWithStatementStrategy(
+//                new StatementStrategy() {
+//                    @Override
+//                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                        return c.prepareStatement("delete from users");
+//                    }
+//                }
+//        );
+//        executeSql("delete from users");    // 변하지 않는 부분을 분리시킨 메소드를 이용하여 구현
+        this.jdbcContext.executeSql("delete from users");   // 분리시킨 메소드를 템플릿으로 이동 후 구현
     }
+
+    // 변하지 않는 부분을 분리시킨 메소드
+//    private void executeSql(final String query) throws SQLException {
+////        this.jdbcContext.workWithStatementStrategy(
+////                new StatementStrategy() {
+////                    @Override
+////                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+////                        return c.prepareStatement(query);
+////                    }
+////                }
+////        );
+////    }
 
     // jdbcContext()를 공통의 클래스로 이전하고 JdbcContext 클래스를 DI 받아 사용
 //    public void deleteAll() throws SQLException {
