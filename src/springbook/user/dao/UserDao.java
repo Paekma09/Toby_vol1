@@ -344,6 +344,17 @@ public class UserDao {
 ////        );
 ////    }
 
+    // jdbcContext()를 공통의 클래스로 이전하고 JdbcContext 클래스를 DI 받아 사용
+//    public void deleteAll() throws SQLException {
+//        this.jdbcContext.workWithStatementStrategy(
+//                new StatementStrategy() {
+//                    @Override
+//                    public PreparedStatement makePrepareStatement(Connection c) throws SQLException {
+//                        return c.prepareStatement("delete from users");
+//                    }
+//                }
+//        );
+//    }
 
 
 //    public int getCount() throws SQLException {
