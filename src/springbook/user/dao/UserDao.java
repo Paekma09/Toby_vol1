@@ -1,5 +1,6 @@
 package springbook.user.dao;
 
+import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -157,8 +158,16 @@ public class UserDao {
     // DI 적용을 위한 클라이언트 / 컨텍스트 분리 ----[E]
 
     // JdbcTemplate 이용한 add() 메소드
-    public void add(final User user) {
+    public void add(final User user) throws DuplicateUserIdException {
         this.jdbcTemplate.update("insert into users(id, name, password) values (?,?,?)", user.getId(), user.getName(), user.getPassword());
+//        try {
+//
+//        } catch (SQLException e) {
+//            if (e.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY)
+//                throw new DuplicateUserIdException(e);  //예외 전환
+//            else
+//                throw new RuntimeException(e);  //예외 포장
+//        }
     }
 
 //    public User get(String id) throws SQLException {
