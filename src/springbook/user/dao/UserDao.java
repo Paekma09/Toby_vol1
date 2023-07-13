@@ -2,6 +2,7 @@ package springbook.user.dao;
 
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -158,16 +159,24 @@ public class UserDao {
     // DI 적용을 위한 클라이언트 / 컨텍스트 분리 ----[E]
 
     // JdbcTemplate 이용한 add() 메소드
-    public void add(final User user) throws DuplicateUserIdException {
-        this.jdbcTemplate.update("insert into users(id, name, password) values (?,?,?)", user.getId(), user.getName(), user.getPassword());
+//    public void add(final User user) throws DuplicateUserIdException {  //애플리케이션 레벨의 체크 예외
 //        try {
-//
-//        } catch (SQLException e) {
-//            if (e.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY)
-//                throw new DuplicateUserIdException(e);  //예외 전환
-//            else
-//                throw new RuntimeException(e);  //예외 포장
+//            this.jdbcTemplate.update("insert into users(id, name, password) values (?,?,?)", user.getId(), user.getName(), user.getPassword());
+//        } catch (DuplicateKeyException e) {
+//            throw new DuplicateUserIdException(e);  //예외를 전환할 때는 원인이 되는 예외를 중첩하는 것이 좋다.
 //        }
+////        try {
+////
+////        } catch (SQLException e) {
+////            if (e.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY)
+////                throw new DuplicateUserIdException(e);  //예외 전환
+////            else
+////                throw new RuntimeException(e);  //예외 포장
+////        }
+//    }
+
+    public void add(final User user) {  //애플리케이션 레벨의 체크 예외
+            this.jdbcTemplate.update("insert into users(id, name, password) values (?,?,?)", user.getId(), user.getName(), user.getPassword());
     }
 
 //    public User get(String id) throws SQLException {
