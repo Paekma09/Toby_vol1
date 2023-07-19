@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="user.dao.UserDaoTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2023-07-19T13:44:36" hostname="DESKTOP-CR5B87G" time="1.759">
+  <properties/>
+  <testcase name="getUserFailure" classname="user.dao.UserDaoTest" time="0.778"/>
+  <testcase name="getAll" classname="user.dao.UserDaoTest" time="0.207"/>
+  <testcase name="update" classname="user.dao.UserDaoTest" time="0.181"/>
+  <testcase name="addAndGet" classname="user.dao.UserDaoTest" time="0.181"/>
+  <testcase name="count" classname="user.dao.UserDaoTest" time="0.178"/>
+  <testcase name="duplicateKey" classname="user.dao.UserDaoTest" time="0.174"/>
+  <testcase name="sqlExceptionTranslate" classname="user.dao.UserDaoTest" time="0.051"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[7월 19, 2023 10:44:35 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getDefaultTestExecutionListenerClassNames
+정보: Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+7월 19, 2023 10:44:35 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getTestExecutionListeners
+정보: Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@302f7971, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@332729ad, org.springframework.test.context.support.DirtiesContextTestExecutionListener@75d2da2d, org.springframework.test.context.transaction.TransactionalTestExecutionListener@4278284b, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@9573584, org.springframework.test.context.event.EventPublishingTestExecutionListener@3370f42]
+Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+]]></system-err>
+</testsuite>
