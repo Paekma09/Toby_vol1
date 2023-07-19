@@ -145,4 +145,26 @@ public class UserDaoTest {
             assertThat(set.translate(null,null, sqlEx), instanceOf(DuplicateKeyException.class));   //에러 메세지를 만들때 사용하는 정보이므로 null 로 넣어도 된다.
         }
     }
+
+    // 사용자 정보 수정 테스트 메소드
+    @Test
+    public void update() {
+        dao.deleteAll();
+
+        dao.add(user1);
+        dao.add(user2);
+
+        // 픽스처에 들어 있는 정보를 변경해서 수정 메소드를 호출한다.
+        user1.setName("남보영");
+        user1.setPassword("abc12345");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(1000);
+        user1.setRecommend(999);
+        dao.update(user1);
+
+        User user1update = dao.get(user1.getId());
+        checkSameUser(user1, user1update);
+        User user2same = dao.get(user2.getId());
+        checkSameUser(user2, user2same);
+    }
 }
