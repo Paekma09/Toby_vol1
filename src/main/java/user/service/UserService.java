@@ -38,4 +38,12 @@ public class UserService {
             }
         }
     }
+
+    // 사용자 신규 등록 로직을 담은 add() 메소드
+    public void add(User user) {
+        if (user.getLevel() == null) {
+            user.setLevel(Level.BASIC);
+        }
+        userDao.add(user);
+    }
 }
