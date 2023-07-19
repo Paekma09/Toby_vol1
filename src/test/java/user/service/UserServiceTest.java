@@ -76,7 +76,7 @@ public class UserServiceTest {
         userDao.deleteAll();
 
         User userWithLevel = users.get(4);  // GOLD 레벨 ---> GOLD 레벨이 이미 지정된 User 라면 레벨을 초기화하지 않아야 한다.
-        // 레벨이 비어 있는 사용자, 로직에 따라 등록 중에 BASIC 에벨도 설정 되어야 한다.
+        // 레벨이 비어 있는 사용자, 로직에 따라 등록 중에 BASIC 레벨도 설정 되어야 한다.
         User userWithoutLevel = users.get(0);
         userWithoutLevel.setLevel(null);
 
