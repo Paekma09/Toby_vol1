@@ -19,7 +19,7 @@ public class UserService {
 
     // 기본 작업 흐름만 남겨둔 upgradeLevels()
     public void upgradeLevels() {
-        List<User> users =userDao.getAll();
+        List<User> users = userDao.getAll();
         for (User user : users) {
             if (canUpgradeLevel(user)) {
                 upgradeLevel(user);
@@ -51,8 +51,8 @@ public class UserService {
 //        }
 //    }
 
-    // 간결해진 upgradeLevel()
-    private void upgradeLevel(User user) {
+    // 간결해진 upgradeLevel() ---> 테스트용 UserService 서브클래스에서 오버라이딩으로 인한 접근권한 변경 (private -> protected)
+    protected void upgradeLevel(User user) {
         user.upgradeLevel();
         userDao.update(user);
     }
