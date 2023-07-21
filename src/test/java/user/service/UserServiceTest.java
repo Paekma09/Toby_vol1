@@ -10,6 +10,7 @@ import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +31,36 @@ public class UserServiceTest {
     UserDao userDao;
 
     List<User> users;   // 테스트 픽스처
+
+    /*
+    * 동기화가 적용된 UserService 에 따라 수정된 테스트
+    * */
+    @Autowired
+    DataSource dataSource;
+
+    @Test
+    public void upgradeAllOrNothing() throws Exception {
+        UserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+        testUserService.setDataSource(this.dataSource);
+
+        userDao.deleteAll();
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        try {
+            // TestUserService 는 업그레이드 작업 중에 예외가 발생해야 한다. 정상 종료라면 문제가 있으니 실패
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (TestUserServiceException e) {  // TestUserService 가 던져주는 예외를 잡아서 계속 진행되도록 한다. 그 외의 예외라면 테스트 실패
+        }
+        // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
+        checkLevelUpgraded(users.get(1), false);
+    }
+    /*
+    *
+    * */
 
     // userService 빈의 주입을 확인하는 테스트
     @Test
@@ -52,7 +83,7 @@ public class UserServiceTest {
 
     // checkLevelUpgraded() 메소드 이용하여 사용자 레벨 업그레이드 테스트 (개선)
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
         userDao.deleteAll();
 
         for (User user : users) {
@@ -127,25 +158,25 @@ public class UserServiceTest {
     }
 
     // 예외 발생시 작업 취소 여부 테스트
-    @Test
-    public void upgradeAllOrNothing() {
-        UserService testUserService = new TestUserService(users.get(3).getId());    // 예외를 발생시킬 네 번째 사용자의 id를 넣어서 테스트용 UserService 대역 오브젝트를 생성한다.
-        testUserService.setUserDao(this.userDao);   // userDao 를 수동 DI 해준다.
-
-        userDao.deleteAll();
-        for (User user : users) {
-            userDao.add(user);
-        }
-
-        try {
-            // TestUserService 는 업그레이드 작업 중에 예외가 발생해야 한다. 정상 종료라면 문제가 있으니 실패
-            testUserService.upgradeLevels();
-            fail("TestUserServiceException expected");
-        } catch (TestUserServiceException e) {  // TestUserService 가 던져주는 예외를 잡아서 계속 진행되도록 한다. 그 외의 예외라면 테스트 실패
-        }
-        // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
-        checkLevelUpgraded(users.get(1), false);
-    }
+//    @Test
+//    public void upgradeAllOrNothing() {
+//        UserService testUserService = new TestUserService(users.get(3).getId());    // 예외를 발생시킬 네 번째 사용자의 id를 넣어서 테스트용 UserService 대역 오브젝트를 생성한다.
+//        testUserService.setUserDao(this.userDao);   // userDao 를 수동 DI 해준다.
+//
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        try {
+//            // TestUserService 는 업그레이드 작업 중에 예외가 발생해야 한다. 정상 종료라면 문제가 있으니 실패
+//            testUserService.upgradeLevels();
+//            fail("TestUserServiceException expected");
+//        } catch (TestUserServiceException e) {  // TestUserService 가 던져주는 예외를 잡아서 계속 진행되도록 한다. 그 외의 예외라면 테스트 실패
+//        }
+//        // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
+//        checkLevelUpgraded(users.get(1), false);
+//    }
 
 
     // UserService 의 테스트용 대역 클래스
