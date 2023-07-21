@@ -1,6 +1,11 @@
 package user.service;
 
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import user.dao.UserDao;
 import user.domain.Level;
@@ -17,20 +22,17 @@ public class UserService {
     public static final int MIN_RECOMMEND_FOR_GOLD = 30;
 
     /*
-    * 트랜잭션 동기화 방식을 적용한 UserService
+    * 트랜잭션 매니저를 빈으로 분리시킨 UserService
     * */
-    // Connection 을 생성할때 사용 할 DataSource 를 DI 받도록 한다.
-    private DataSource dataSource;
+    private PlatformTransactionManager transactionManager;
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;   // 프로퍼티 이름은 관례를 따라 transactionManager 라고 만드는 것이 편리하다.
     }
 
-    public void upgradeLevels() throws Exception {
-        TransactionSynchronizationManager.initSynchronization();    //트랜잭션 동기화 관리자를 이용해 동기화 작업을 초기화 한다.
-        // DB 커넥션을 생성하고 트랜잭션을 시작한다. 이후의 DAO 작업은 모두 여기서 시자간 트랜잭션 안에서 진행된다.
-        Connection c = DataSourceUtils.getConnection(dataSource);   // DB 커넥션 생성과 동기화를 함께 해주는 유틸리티 메소드
-        c.setAutoCommit(false);
+    public void upgradeLevels() {
+        // DI 받은 트랜잭션 매니저를 공유해서 사용한다. 멀티스레드 환경에서도 안전함.
+        TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 
         try {
             List<User> users = userDao.getAll();
@@ -39,20 +41,73 @@ public class UserService {
                     upgradeLevel(user);
                 }
             }
-            c.commit(); // 정상적으로 작업을 마치면 트랜잭션 커밋
-        } catch (Exception e) {
-            c.rollback();   // 예외가 발생하면 롤백한다.
+            this.transactionManager.commit(status);
+        } catch (RuntimeException e) {
+            this.transactionManager.rollback(status);
             throw e;
-        } finally {
-            DataSourceUtils.releaseConnection(c, dataSource);   // 스프링 유틸리티 메소드를 이용해 DB 커넥션을 안전하게 닫는다.
-            // 동기화 작업 종료 및 정리
-            TransactionSynchronizationManager.unbindResource(this.dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
     }
+
+    /*
+    * 트랜잭션 동기화 방식을 적용한 UserService
+    * */
+    // Connection 을 생성할때 사용 할 DataSource 를 DI 받도록 한다.
+//    private DataSource dataSource;
+//
+//    public void setDataSource(DataSource dataSource) {
+//        this.dataSource = dataSource;
+//    }
+
+//    public void upgradeLevels() throws Exception {
+//        TransactionSynchronizationManager.initSynchronization();    //트랜잭션 동기화 관리자를 이용해 동기화 작업을 초기화 한다.
+//        // DB 커넥션을 생성하고 트랜잭션을 시작한다. 이후의 DAO 작업은 모두 여기서 시자간 트랜잭션 안에서 진행된다.
+//        Connection c = DataSourceUtils.getConnection(dataSource);   // DB 커넥션 생성과 동기화를 함께 해주는 유틸리티 메소드
+//        c.setAutoCommit(false);
+//
+//        try {
+//            List<User> users = userDao.getAll();
+//            for (User user : users) {
+//                if (canUpgradeLevel(user)) {
+//                    upgradeLevel(user);
+//                }
+//            }
+//            c.commit(); // 정상적으로 작업을 마치면 트랜잭션 커밋
+//        } catch (Exception e) {
+//            c.rollback();   // 예외가 발생하면 롤백한다.
+//            throw e;
+//        } finally {
+//            DataSourceUtils.releaseConnection(c, dataSource);   // 스프링 유틸리티 메소드를 이용해 DB 커넥션을 안전하게 닫는다.
+//            // 동기화 작업 종료 및 정리
+//            TransactionSynchronizationManager.unbindResource(this.dataSource);
+//            TransactionSynchronizationManager.clearSynchronization();
+//        }
+//    }
     /*
     *
     * */
+
+    /*
+     * 스프링의 트랜잭션 추상화 API 를 적용한 upgradeLevels()
+     * */
+//    public void upgradeLevels() {
+//        PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);   // JDBC 트랜잭션 추상 오브젝트 생성
+//        // 트랜잭션 시작
+//        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+//
+//        try {
+//            // 트랜잭션 안에서 진행되는 작업
+//            List<User> users = userDao.getAll();
+//            for (User user : users) {
+//                if (canUpgradeLevel(user)) {
+//                    upgradeLevel(user);
+//                }
+//            }
+//            transactionManager.commit(status);  // 트랜잭션 커밋
+//        } catch (RuntimeException e) {
+//            transactionManager.rollback(status);    // 트랜잭션 롤백
+//            throw e;
+//        }
+//    }
 
     UserDao userDao;
 

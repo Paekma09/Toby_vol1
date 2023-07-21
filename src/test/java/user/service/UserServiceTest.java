@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
@@ -33,16 +34,16 @@ public class UserServiceTest {
     List<User> users;   // 테스트 픽스처
 
     /*
-    * 동기화가 적용된 UserService 에 따라 수정된 테스트
+    * 트랜잭션 매니저를 수동 DI 하도록 수정한 테스트
     * */
     @Autowired
-    DataSource dataSource;
+    PlatformTransactionManager transactionManager;
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
         UserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(this.userDao);
-        testUserService.setDataSource(this.dataSource);
+        testUserService.setUserDao(userDao);
+        testUserService.setTransactionManager(transactionManager);  // userService 빈의 프로퍼티 설정과 동일한 수동 DI
 
         userDao.deleteAll();
         for (User user : users) {
@@ -58,6 +59,36 @@ public class UserServiceTest {
         // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
         checkLevelUpgraded(users.get(1), false);
     }
+    /*
+    *
+    * */
+
+    /*
+    * 동기화가 적용된 UserService 에 따라 수정된 테스트
+    * */
+//    @Autowired
+//    DataSource dataSource;
+//
+//    @Test
+//    public void upgradeAllOrNothing() throws Exception {
+//        UserService testUserService = new TestUserService(users.get(3).getId());
+//        testUserService.setUserDao(this.userDao);
+//        testUserService.setDataSource(this.dataSource);
+//
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        try {
+//            // TestUserService 는 업그레이드 작업 중에 예외가 발생해야 한다. 정상 종료라면 문제가 있으니 실패
+//            testUserService.upgradeLevels();
+//            fail("TestUserServiceException expected");
+//        } catch (TestUserServiceException e) {  // TestUserService 가 던져주는 예외를 잡아서 계속 진행되도록 한다. 그 외의 예외라면 테스트 실패
+//        }
+//        // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
+//        checkLevelUpgraded(users.get(1), false);
+//    }
     /*
     *
     * */
