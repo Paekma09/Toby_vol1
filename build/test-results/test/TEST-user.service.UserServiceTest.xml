@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="user.service.UserServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2023-07-21T14:22:03" hostname="DESKTOP-CR5B87G" time="1.237">
+<testsuite name="user.service.UserServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2023-07-21T16:05:01" hostname="DESKTOP-CR5B87G" time="1.223">
   <properties/>
-  <testcase name="upgradeAllOrNothing" classname="user.service.UserServiceTest" time="0.824"/>
-  <testcase name="add" classname="user.service.UserServiceTest" time="0.141"/>
-  <testcase name="bean" classname="user.service.UserServiceTest" time="0.006"/>
-  <testcase name="upgradeLevels" classname="user.service.UserServiceTest" time="0.264"/>
+  <testcase name="upgradeAllOrNothing" classname="user.service.UserServiceTest" time="0.766"/>
+  <testcase name="add" classname="user.service.UserServiceTest" time="0.116"/>
+  <testcase name="bean" classname="user.service.UserServiceTest" time="0.005"/>
+  <testcase name="upgradeLevels" classname="user.service.UserServiceTest" time="0.332"/>
   <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[7월 21, 2023 11:22:02 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getDefaultTestExecutionListenerClassNames
+  <system-err><![CDATA[7월 22, 2023 1:05:01 오전 org.springframework.test.context.support.AbstractTestContextBootstrapper getDefaultTestExecutionListenerClassNames
 정보: Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
-7월 21, 2023 11:22:02 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getTestExecutionListeners
-정보: Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@1672fe87, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@5026735c, org.springframework.test.context.support.DirtiesContextTestExecutionListener@1b45c0e, org.springframework.test.context.transaction.TransactionalTestExecutionListener@11f0a5a1, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@10f7f7de, org.springframework.test.context.event.EventPublishingTestExecutionListener@73a8da0f]
+7월 22, 2023 1:05:01 오전 org.springframework.test.context.support.AbstractTestContextBootstrapper getTestExecutionListeners
+정보: Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@11f0a5a1, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@10f7f7de, org.springframework.test.context.support.DirtiesContextTestExecutionListener@73a8da0f, org.springframework.test.context.transaction.TransactionalTestExecutionListener@50dfbc58, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@4416d64f, org.springframework.test.context.event.EventPublishingTestExecutionListener@6bf08014]
 Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
 ]]></system-err>
 </testsuite>
