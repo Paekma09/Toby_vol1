@@ -7,6 +7,11 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://repo.mycompany.com/maven2"
+        allowInsecureProtocol true
+    }
+    gradlePluginPortal()
 }
 sourceSets {
     main {
@@ -23,4 +28,12 @@ dependencies {
     implementation 'org.springframework:spring-jdbc:5.2.2.RELEASE'
     implementation 'mysql:mysql-connector-java:8.0.30'
     implementation 'org.springframework:spring-test:5.2.2.RELEASE'
+    // https://mvnrepository.com/artifact/javax.mail/mail
+    implementation group: 'javax.mail', name: 'mail', version: '1.4'
+    // https://mvnrepository.com/artifact/javax.activation/com.springsource.javax.activation
+    compileOnly group: 'javax.activation', name: 'com.springsource.javax.activation', version: '1.1.0'
+    // https://mvnrepository.com/artifact/org.springframework/spring-context-support
+    implementation group: 'org.springframework', name: 'spring-context-support', version: '5.2.19.RELEASE'
+
+
 }
