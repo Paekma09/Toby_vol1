@@ -13,13 +13,7 @@ repositories {
     }
     gradlePluginPortal()
 }
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-    }
-}
+
 dependencies {
     implementation 'cglib:cglib-full:2.0.2'
     implementation 'junit:junit:4.13.1'
@@ -34,6 +28,4 @@ dependencies {
     compileOnly group: 'javax.activation', name: 'com.springsource.javax.activation', version: '1.1.0'
     // https://mvnrepository.com/artifact/org.springframework/spring-context-support
     implementation group: 'org.springframework', name: 'spring-context-support', version: '5.2.19.RELEASE'
-
-
 }
