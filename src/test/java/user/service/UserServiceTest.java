@@ -104,11 +104,11 @@ public class UserServiceTest {
     public void setUp() {
         users = Arrays.asList(  // 배열을 리스트로 만들어주는 편리한 메소드, 배열을 가변인자로 넣어주면 더욱 편리하다.
                 // 테스트에서는 가능한 한 경계값을 사용하는 것이 좋다.
-                new User("kym57", "고영미", "p1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER-1, 0),
-                new User("paekma09", "남기준", "p2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0),
-                new User("nambo81", "남보영", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD-1),
-                new User("chubss", "강성희", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
-                new User("roy", "로이", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
+                new User("kym57", "고영미", "p1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER-1, 0, "paekma09@gmail.com"),
+                new User("paekma09", "남기준", "p2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0, "paekma09@gmail.com"),
+                new User("nambo81", "남보영", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD-1, "paekma09@gmail.com"),
+                new User("chubss", "강성희", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD, "paekma09@gmail.com"),
+                new User("roy", "로이", "p5", Level.GOLD, 100, Integer.MAX_VALUE, "paekma09@gmail.com")
         );
     }
 

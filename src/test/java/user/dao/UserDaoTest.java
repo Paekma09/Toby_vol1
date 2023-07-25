@@ -39,9 +39,9 @@ public class UserDaoTest {
     @Before
     public void setUp() {
 //        this.dao = this.context.getBean("userDao", UserDao.class);
-        this.user1 = new User("paekma09", "남기준", "KHS0909", Level.BASIC, 1, 0);
-        this.user2 = new User("ksh0909", "강성희", "kj1116", Level.SILVER, 55, 10);
-        this.user3 = new User("kjsh09", "기준성희", "79840908", Level.GOLD, 100, 40);
+        this.user1 = new User("paekma09", "남기준", "KHS0909", Level.BASIC, 1, 0, "paekma09@gmail.com");
+        this.user2 = new User("ksh0909", "강성희", "kj1116", Level.SILVER, 55, 10, "paekma09@gmail.com");
+        this.user3 = new User("kjsh09", "기준성희", "79840908", Level.GOLD, 100, 40, "paekma09@gmail.com");
 
 //        System.out.println(this.context);
 //        System.out.println(this);
@@ -120,6 +120,7 @@ public class UserDaoTest {
         assertThat(user1.getLevel(), is(user2.getLevel()));
         assertThat(user1.getLogin(), is(user2.getLogin()));
         assertThat(user1.getRecommend(), is(user2.getRecommend()));
+        assertThat(user1.getEmail(), is(user2.getEmail()));
     }
 
     //DataAccessException 에 대한 테스트
