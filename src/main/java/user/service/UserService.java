@@ -2,6 +2,9 @@ package user.service;
 
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
@@ -210,21 +213,55 @@ public class UserService {
 //    }
 
     // JavaMail 을 이용한 메일 발송 메소드
+//    private void sendUpgradeEMail(User user) {
+//        Properties props = new Properties();
+//        props.put("mail.smtp.host", "smtp.gmail.com");
+//        Session s = Session.getInstance(props, null);
+//
+//        MimeMessage message = new MimeMessage(s);
+//
+//        try {
+//            message.setFrom(new InternetAddress("paekma09@gmail.com"));
+//            message.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
+//            message.setSubject("Upgrade 안내");
+//            message.setText("사용자님의 등급이  " + user.getLevel().name() + "로 업그레이드 되었습니다.");
+//            Transport.send(message);
+//        } catch (MessagingException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+    // 스프링의 MailSender 를 이용한 메일 발송 메소드
+//    private void sendUpgradeEMail(User user) {
+//        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();   // MailSender 구현 클래스의 오브젝트를 생성한다.
+//        mailSender.setHost("mail.server.com");
+//
+//        // MailMessage 인터페이스의 구현 클래스 오브젝트를 만들어 메일 내용을 작성한다.
+//        SimpleMailMessage mailMessage = new SimpleMailMessage();
+//        mailMessage.setTo(user.getEmail());
+//        mailMessage.setFrom("paekma09@gmail.com");
+//        mailMessage.setSubject("Upgrade 안내");
+//        mailMessage.setText("사용자님의 등급이 " + user.getLevel().name());
+//
+//        mailSender.send(mailMessage);
+//    }
+
+    /*
+     * 메일 전송 기능을 가진 오브젝트를 DI 받도록 수정한 UserService
+     * */
+    private MailSender mailSender;
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
     private void sendUpgradeEMail(User user) {
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        Session s = Session.getInstance(props, null);
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("paekma09@gmail.com");
+        mailMessage.setSubject("Upgrade 안내");
+        mailMessage.setText("사용자님의 등급이 " + user.getLevel().name());
 
-        MimeMessage message = new MimeMessage(s);
-
-        try {
-            message.setFrom(new InternetAddress("paekma09@gmail.com"));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
-            message.setSubject("Upgrade 안내");
-            message.setText("사용자님의 등급이  " + user.getLevel().name() + "로 업그레이드 되었습니다.");
-            Transport.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        this.mailSender.send(mailMessage);
     }
 }
