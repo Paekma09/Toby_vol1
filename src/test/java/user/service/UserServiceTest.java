@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -30,6 +31,8 @@ public class UserServiceTest {
     UserService userService;
     @Autowired
     UserDao userDao;
+    @Autowired
+    MailSender mailSender;
 
     List<User> users;   // 테스트 픽스처
 
@@ -58,6 +61,8 @@ public class UserServiceTest {
         }
         // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
         checkLevelUpgraded(users.get(1), false);
+
+        testUserService.setMailSender(mailSender);
     }
     /*
     *
