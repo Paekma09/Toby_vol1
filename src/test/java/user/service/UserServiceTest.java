@@ -4,7 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -13,6 +16,7 @@ import user.domain.Level;
 import user.domain.User;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,6 +51,7 @@ public class UserServiceTest {
         UserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(userDao);
         testUserService.setTransactionManager(transactionManager);  // userService 빈의 프로퍼티 설정과 동일한 수동 DI
+        testUserService.setMailSender(mailSender);
 
         userDao.deleteAll();
         for (User user : users) {
@@ -61,8 +66,6 @@ public class UserServiceTest {
         }
         // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
         checkLevelUpgraded(users.get(1), false);
-
-        testUserService.setMailSender(mailSender);
     }
     /*
     *
@@ -117,15 +120,20 @@ public class UserServiceTest {
         );
     }
 
-    // checkLevelUpgraded() 메소드 이용하여 사용자 레벨 업그레이드 테스트 (개선)
+    // 메일 발송 대상을 확인하는 upgradeLevels 테스트
     @Test
+    @DirtiesContext // 컨텍스트의 DI 설정을 변경하는 테스트라는 것을 알려준다.
     public void upgradeLevels() throws Exception {
         userDao.deleteAll();
-
         for (User user : users) {
             userDao.add(user);
         }
 
+        // 메일 발송 결과를 테스트 할수 있도록 목 오브젝트를 만들어 userService 의 의존 오브젝트로 주입해준다.
+        MockMailSender mockMailSender = new MockMailSender();
+        userService.setMailSender(mockMailSender);
+
+        // 업그레이드 테스트, 메일 발송이 일어나면 MockMailSender 오브젝트의 리스트에 그 결과가 저장된다.
         userService.upgradeLevels();
 
         checkLevelUpgraded(users.get(0), false);
@@ -133,7 +141,31 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(2), false);
         checkLevelUpgraded(users.get(3), true);
         checkLevelUpgraded(users.get(4), false);
+
+        // 목 오브젝트에 저장된 메일 수신자 목록을 가져와 업그레이드 대상과 일치하는지 확인 한다.
+        List<String> request = mockMailSender.getRequests();
+        assertThat(request.size(), is(2));
+        assertThat(request.get(0), is(users.get(1).getEmail()));
+        assertThat(request.get(1), is(users.get(3).getEmail()));
     }
+
+    // checkLevelUpgraded() 메소드 이용하여 사용자 레벨 업그레이드 테스트 (개선)
+//    @Test
+//    public void upgradeLevels() throws Exception {
+//        userDao.deleteAll();
+//
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        userService.upgradeLevels();
+//
+//        checkLevelUpgraded(users.get(0), false);
+//        checkLevelUpgraded(users.get(1), true);
+//        checkLevelUpgraded(users.get(2), false);
+//        checkLevelUpgraded(users.get(3), true);
+//        checkLevelUpgraded(users.get(4), false);
+//    }
 
     // 사용자 레벨 업그레이드 테스트
 //    @Test
@@ -234,5 +266,27 @@ public class UserServiceTest {
 
     // 테스트용 예외
     static class TestUserServiceException extends RuntimeException {
+    }
+
+    /*
+     * 목 오브젝트로 만든 메일 전송 확인용 클래스
+     * */
+    static class MockMailSender implements MailSender {
+        // UserService 로부터 전송 요청을 받은 메일 주소를 저장해두고 이를 읽을 수 있게 한다.
+        private List<String> requests = new ArrayList<String>();
+
+        public List<String> getRequests() {
+            return requests;
+        }
+
+        @Override
+        public void send(SimpleMailMessage mailMessage) throws MailException {
+            requests.add(mailMessage.getTo()[0]);   // 전송 요청을 받은 이메일 주소를 저장해둔다. 간단하게 첫번째 수신자 메일 주소만 저장 했다.
+        }
+
+        @Override
+        public void send(SimpleMailMessage... mailMessages) throws MailException {
+
+        }
     }
 }
