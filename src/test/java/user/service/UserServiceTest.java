@@ -129,34 +129,71 @@ public class UserServiceTest {
         );
     }
 
-    // 메일 발송 대상을 확인하는 upgradeLevels 테스트
+    /*
+     * MockUserDao 를 사용해서 만든 고립된 테스트
+     * */
     @Test
-    @DirtiesContext // 컨텍스트의 DI 설정을 변경하는 테스트라는 것을 알려준다.
     public void upgradeLevels() throws Exception {
-        userDao.deleteAll();
-        for (User user : users) {
-            userDao.add(user);
-        }
+        UserServiceImpl userServiceImpl = new UserServiceImpl();    // 고립된 테스트에서는 테스트 대상 오브젝트를 직접 생성하면 된다.
 
-        // 메일 발송 결과를 테스트 할수 있도록 목 오브젝트를 만들어 userService 의 의존 오브젝트로 주입해준다.
+        // 목 오브젝트로 만든 UserDao 를 직접 DI 해준다.
+        MockUserDao mockUserDao = new MockUserDao(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
+
         MockMailSender mockMailSender = new MockMailSender();
         userServiceImpl.setMailSender(mockMailSender);
 
-        // 업그레이드 테스트, 메일 발송이 일어나면 MockMailSender 오브젝트의 리스트에 그 결과가 저장된다.
-        userService.upgradeLevels();
+        userServiceImpl.upgradeLevels();
 
-        checkLevelUpgraded(users.get(0), false);
-        checkLevelUpgraded(users.get(1), true);
-        checkLevelUpgraded(users.get(2), false);
-        checkLevelUpgraded(users.get(3), true);
-        checkLevelUpgraded(users.get(4), false);
+        List<User> updated = mockUserDao.getUpdated();  // MockUserDao 로부터 업데이트 결과를 가져온다.
 
-        // 목 오브젝트에 저장된 메일 수신자 목록을 가져와 업그레이드 대상과 일치하는지 확인 한다.
+        // 업데이트 횟수와 정보를 확인한다.
+        assertThat(updated.size(), is(2));
+        checkUserAndLevel(updated.get(0), "paekma09", Level.SILVER);
+        checkUserAndLevel(updated.get(1), "chubss", Level.GOLD);
+
         List<String> request = mockMailSender.getRequests();
         assertThat(request.size(), is(2));
         assertThat(request.get(0), is(users.get(1).getEmail()));
         assertThat(request.get(1), is(users.get(3).getEmail()));
     }
+
+    // id와 level 을 확인하는 간단한 헬퍼 메소드
+    private void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
+        assertThat(updated.getId(), is(expectedId));
+        assertThat(updated.getLevel(), is(expectedLevel));
+    }
+
+
+
+    // 메일 발송 대상을 확인하는 upgradeLevels 테스트
+//    @Test
+//    @DirtiesContext // 컨텍스트의 DI 설정을 변경하는 테스트라는 것을 알려준다.
+//    public void upgradeLevels() throws Exception {
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        // 메일 발송 결과를 테스트 할수 있도록 목 오브젝트를 만들어 userService 의 의존 오브젝트로 주입해준다.
+//        MockMailSender mockMailSender = new MockMailSender();
+//        userServiceImpl.setMailSender(mockMailSender);
+//
+//        // 업그레이드 테스트, 메일 발송이 일어나면 MockMailSender 오브젝트의 리스트에 그 결과가 저장된다.
+//        userService.upgradeLevels();
+//
+//        checkLevelUpgraded(users.get(0), false);
+//        checkLevelUpgraded(users.get(1), true);
+//        checkLevelUpgraded(users.get(2), false);
+//        checkLevelUpgraded(users.get(3), true);
+//        checkLevelUpgraded(users.get(4), false);
+//
+//        // 목 오브젝트에 저장된 메일 수신자 목록을 가져와 업그레이드 대상과 일치하는지 확인 한다.
+//        List<String> request = mockMailSender.getRequests();
+//        assertThat(request.size(), is(2));
+//        assertThat(request.get(0), is(users.get(1).getEmail()));
+//        assertThat(request.get(1), is(users.get(3).getEmail()));
+//    }
 
     // checkLevelUpgraded() 메소드 이용하여 사용자 레벨 업그레이드 테스트 (개선)
 //    @Test
@@ -297,5 +334,56 @@ public class UserServiceTest {
         public void send(SimpleMailMessage... mailMessages) throws MailException {
 
         }
+    }
+
+    /*
+     * UserDao 오브젝트
+     * */
+    static class MockUserDao implements UserDao {
+        private List<User> users;   // 레벨 업그레이드 후보 User 오브젝트 목록
+        private List<User> updated = new ArrayList<>(); // 업그레이드 대상 오브젝트를 저장해둘 목록
+
+        public MockUserDao(List<User> users) {
+            this.users = users;
+        }
+
+        public List<User> getUpdated() {
+            return updated;
+        }
+
+        // 스텁기능 제공
+        @Override
+        public List<User> getAll() {
+            return this.users;
+        }
+
+        // 목 오브젝트 기능 제공
+        @Override
+        public void update(User user) {
+            updated.add(user);
+        }
+
+
+        // 테스트에 사용되지 않는 메소드
+        @Override
+        public void add(User user) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public User get(String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void deleteAll() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getCount() {
+            throw new UnsupportedOperationException();
+        }
+
     }
 }
