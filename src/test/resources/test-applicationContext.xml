@@ -10,9 +10,18 @@
         <property name="password" value="1234"/>
     </bean>
 
-    <bean id="userService" class="user.service.UserService">
-        <property name="userDao" ref="userDao"/>
+<!--    <bean id="userService" class="user.service.UserServiceImpl">-->
+<!--        <property name="userDao" ref="userDao"/>-->
+<!--        <property name="transactionManager" ref="transactionManager"/>-->
+<!--        <property name="mailSender" ref="mailSender"/>-->
+<!--    </bean>-->
+    <bean id="userService" class="user.service.UserServiceTx">
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService" ref="userServiceImpl"/>
+    </bean>
+
+    <bean id="userServiceImpl" class="user.service.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
     </bean>
 
