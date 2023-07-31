@@ -44,23 +44,49 @@ public class UserService {
         this.transactionManager = transactionManager;   // 프로퍼티 이름은 관례를 따라 transactionManager 라고 만드는 것이 편리하다.
     }
 
-    public void upgradeLevels() {
-        // DI 받은 트랜잭션 매니저를 공유해서 사용한다. 멀티스레드 환경에서도 안전함.
+//    public void upgradeLevels() {
+//        // DI 받은 트랜잭션 매니저를 공유해서 사용한다. 멀티스레드 환경에서도 안전함.
+//        TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
+//
+//        try {
+//            List<User> users = userDao.getAll();
+//            for (User user : users) {
+//                if (canUpgradeLevel(user)) {
+//                    upgradeLevel(user);
+//                }
+//            }
+//            this.transactionManager.commit(status);
+//        } catch (RuntimeException e) {
+//            this.transactionManager.rollback(status);
+//            throw e;
+//        }
+//    }
+
+    /*
+     * 비지니스 로직과 트랜잭션 경계설정의 분리
+     * */
+    public void upgradeLevels() throws Exception {
         TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 
         try {
-            List<User> users = userDao.getAll();
-            for (User user : users) {
-                if (canUpgradeLevel(user)) {
-                    upgradeLevel(user);
-                }
-            }
+            upgradeLevelsInternal();
             this.transactionManager.commit(status);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             this.transactionManager.rollback(status);
             throw e;
         }
     }
+
+    // 분리된 비지니스 로직 코드, 트랜잭션을 적용하기 전과 동일하다.
+    private void upgradeLevelsInternal() {
+        List<User> users = userDao.getAll();
+        for (User user : users) {
+            if (canUpgradeLevel(user)) {
+                upgradeLevel(user);
+            }
+        }
+    }
+
 
     /*
     * 트랜잭션 동기화 방식을 적용한 UserService
