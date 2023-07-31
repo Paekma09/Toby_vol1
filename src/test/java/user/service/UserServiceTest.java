@@ -15,7 +15,6 @@ import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,8 +23,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
@@ -33,6 +32,8 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+    @Autowired
+    UserServiceImpl userServiceImpl;
     @Autowired
     UserDao userDao;
     @Autowired
@@ -48,10 +49,17 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
-        UserService testUserService = new TestUserService(users.get(3).getId());
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(userDao);
-        testUserService.setTransactionManager(transactionManager);  // userService 빈의 프로퍼티 설정과 동일한 수동 DI
         testUserService.setMailSender(mailSender);
+
+        // 트랜잭션 기능을 분리한 UserServiceTx는 예외 발생용으로 수정할 필요가 없으니 그대로 사용한다.
+        UserServiceTx txUserService = new UserServiceTx();
+        txUserService.setTransactionManager(transactionManager);
+        txUserService.setUserService(testUserService);
+
+//        testUserServiceImpl.setTransactionManager(transactionManager);  // userService 빈의 프로퍼티 설정과 동일한 수동 DI
+//        testUserServiceImpl.setMailSender(mailSender);
 
         userDao.deleteAll();
         for (User user : users) {
@@ -60,7 +68,8 @@ public class UserServiceTest {
 
         try {
             // TestUserService 는 업그레이드 작업 중에 예외가 발생해야 한다. 정상 종료라면 문제가 있으니 실패
-            testUserService.upgradeLevels();
+//            testUserServiceImpl.upgradeLevels();
+            txUserService.upgradeLevels();  // 트랜잭션 기능을 분리한 오브젝트를 통해 예외 발생용 TestUserService 가 호출되게 해야 한다.
             fail("TestUserServiceException expected");
         } catch (TestUserServiceException e) {  // TestUserService 가 던져주는 예외를 잡아서 계속 진행되도록 한다. 그 외의 예외라면 테스트 실패
         }
@@ -131,7 +140,7 @@ public class UserServiceTest {
 
         // 메일 발송 결과를 테스트 할수 있도록 목 오브젝트를 만들어 userService 의 의존 오브젝트로 주입해준다.
         MockMailSender mockMailSender = new MockMailSender();
-        userService.setMailSender(mockMailSender);
+        userServiceImpl.setMailSender(mockMailSender);
 
         // 업그레이드 테스트, 메일 발송이 일어나면 MockMailSender 오브젝트의 리스트에 그 결과가 저장된다.
         userService.upgradeLevels();
@@ -248,7 +257,7 @@ public class UserServiceTest {
 
 
     // UserService 의 테스트용 대역 클래스
-    static class TestUserService extends UserService {
+    static class TestUserService extends UserServiceImpl {
         private String id;
 
         private TestUserService(String id) {    //예외를 발생시킬 User 오브젝트의 id 를 지정할 수 있게 만든다.
