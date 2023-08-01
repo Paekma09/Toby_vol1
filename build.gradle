@@ -28,4 +28,6 @@ dependencies {
     compileOnly group: 'javax.activation', name: 'com.springsource.javax.activation', version: '1.1.0'
     // https://mvnrepository.com/artifact/org.springframework/spring-context-support
     implementation group: 'org.springframework', name: 'spring-context-support', version: '5.2.19.RELEASE'
+    // https://mvnrepository.com/artifact/org.mockito/mockito-all
+    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.8.4'
 }
