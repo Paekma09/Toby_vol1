@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="user.service.UserServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2023-08-02T15:13:30" hostname="DESKTOP-CR5B87G" time="1.152">
+  <properties/>
+  <testcase name="mockUpgradeLevels" classname="user.service.UserServiceTest" time="0.188"/>
+  <testcase name="upgradeAllOrNothing" classname="user.service.UserServiceTest" time="0.796"/>
+  <testcase name="add" classname="user.service.UserServiceTest" time="0.151"/>
+  <testcase name="bean" classname="user.service.UserServiceTest" time="0.005"/>
+  <testcase name="upgradeLevels" classname="user.service.UserServiceTest" time="0.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[8월 03, 2023 12:13:29 오전 org.springframework.test.context.support.AbstractTestContextBootstrapper getDefaultTestExecutionListenerClassNames
+정보: Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+8월 03, 2023 12:13:29 오전 org.springframework.test.context.support.AbstractTestContextBootstrapper getTestExecutionListeners
+정보: Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@63eef88a, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@53251a66, org.springframework.test.context.support.DirtiesContextTestExecutionListener@6853425f, org.springframework.test.context.transaction.TransactionalTestExecutionListener@352c1b98, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@21129f1f, org.springframework.test.context.event.EventPublishingTestExecutionListener@5a9f4771]
+Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+]]></system-err>
+</testsuite>
