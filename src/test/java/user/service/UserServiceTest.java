@@ -16,6 +16,7 @@ import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,10 +56,21 @@ public class UserServiceTest {
         testUserService.setUserDao(userDao);
         testUserService.setMailSender(mailSender);
 
+        // 다이내믹 프록시를 이용한 트랜잭션 테스트
+        TransactionHandler txHandler = new TransactionHandler();
+        // 트랜잭션 핸들러가 필요한 정보와 오브젝트를 DI 해준다.
+        txHandler.setTarget(testUserService);
+        txHandler.setTransactionManager(transactionManager);
+        txHandler.setPattern("upgradeLevels");
+        // UserService 인터페이스 타입의 다이내믹 프록시 생성
+        UserService txUserService = (UserService) Proxy.newProxyInstance(
+                getClass().getClassLoader(), new Class[] { UserService.class }, txHandler
+        );
+
         // 트랜잭션 기능을 분리한 UserServiceTx는 예외 발생용으로 수정할 필요가 없으니 그대로 사용한다.
-        UserServiceTx txUserService = new UserServiceTx();
-        txUserService.setTransactionManager(transactionManager);
-        txUserService.setUserService(testUserService);
+//        UserServiceTx txUserService = new UserServiceTx();
+//        txUserService.setTransactionManager(transactionManager);
+//        txUserService.setUserService(testUserService);
 
 //        testUserServiceImpl.setTransactionManager(transactionManager);  // userService 빈의 프로퍼티 설정과 동일한 수동 DI
 //        testUserServiceImpl.setMailSender(mailSender);
