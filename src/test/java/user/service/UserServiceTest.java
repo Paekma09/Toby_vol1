@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -45,35 +46,22 @@ public class UserServiceTest {
     List<User> users;   // 테스트 픽스처
 
     /*
-    * 트랜잭션 매니저를 수동 DI 하도록 수정한 테스트
-    * */
+     * 트랜잭션 프록시 팩토리 빈을 적용한 테스트
+     * */
     @Autowired
-    PlatformTransactionManager transactionManager;
+    ApplicationContext context; // 팩토리 빈을 가져오려면 애플리케이션 컨텍스트가 필요하다.
 
     @Test
+    @DirtiesContext // 다이내믹 프록시 팩토리 빈을 직접 만들어 사용할 때는 없앴다가 다시 등장한 컨텍스트 무효화 애노테이션
     public void upgradeAllOrNothing() throws Exception {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(userDao);
         testUserService.setMailSender(mailSender);
 
-        // 다이내믹 프록시를 이용한 트랜잭션 테스트
-        TransactionHandler txHandler = new TransactionHandler();
-        // 트랜잭션 핸들러가 필요한 정보와 오브젝트를 DI 해준다.
-        txHandler.setTarget(testUserService);
-        txHandler.setTransactionManager(transactionManager);
-        txHandler.setPattern("upgradeLevels");
-        // UserService 인터페이스 타입의 다이내믹 프록시 생성
-        UserService txUserService = (UserService) Proxy.newProxyInstance(
-                getClass().getClassLoader(), new Class[] { UserService.class }, txHandler
-        );
-
-        // 트랜잭션 기능을 분리한 UserServiceTx는 예외 발생용으로 수정할 필요가 없으니 그대로 사용한다.
-//        UserServiceTx txUserService = new UserServiceTx();
-//        txUserService.setTransactionManager(transactionManager);
-//        txUserService.setUserService(testUserService);
-
-//        testUserServiceImpl.setTransactionManager(transactionManager);  // userService 빈의 프로퍼티 설정과 동일한 수동 DI
-//        testUserServiceImpl.setMailSender(mailSender);
+        // 팩토리 빈 자체를 가져와야 하므로 빈 이름에 & 를 반드시 넣는다.
+        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);  // 테스트용 타깃 주입
+        txProxyFactoryBean.setTarget(testUserService);
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();   // 변경된 타깃 설정을 이용해서 트랜잭션 다이내믹 프록시 오브젝트를 다시 생성한다.
 
         userDao.deleteAll();
         for (User user : users) {
@@ -81,15 +69,60 @@ public class UserServiceTest {
         }
 
         try {
-            // TestUserService 는 업그레이드 작업 중에 예외가 발생해야 한다. 정상 종료라면 문제가 있으니 실패
-//            testUserServiceImpl.upgradeLevels();
-            txUserService.upgradeLevels();  // 트랜잭션 기능을 분리한 오브젝트를 통해 예외 발생용 TestUserService 가 호출되게 해야 한다.
+            txUserService.upgradeLevels();
             fail("TestUserServiceException expected");
-        } catch (TestUserServiceException e) {  // TestUserService 가 던져주는 예외를 잡아서 계속 진행되도록 한다. 그 외의 예외라면 테스트 실패
+        } catch (TestUserServiceException e) {
         }
-        // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
+
         checkLevelUpgraded(users.get(1), false);
     }
+
+    /*
+    * 트랜잭션 매니저를 수동 DI 하도록 수정한 테스트
+    * */
+    @Autowired
+    PlatformTransactionManager transactionManager;
+
+//    @Test
+//    public void upgradeAllOrNothing() throws Exception {
+//        TestUserService testUserService = new TestUserService(users.get(3).getId());
+//        testUserService.setUserDao(userDao);
+//        testUserService.setMailSender(mailSender);
+//
+//        // 다이내믹 프록시를 이용한 트랜잭션 테스트
+//        TransactionHandler txHandler = new TransactionHandler();
+//        // 트랜잭션 핸들러가 필요한 정보와 오브젝트를 DI 해준다.
+//        txHandler.setTarget(testUserService);
+//        txHandler.setTransactionManager(transactionManager);
+//        txHandler.setPattern("upgradeLevels");
+//        // UserService 인터페이스 타입의 다이내믹 프록시 생성
+//        UserService txUserService = (UserService) Proxy.newProxyInstance(
+//                getClass().getClassLoader(), new Class[] { UserService.class }, txHandler
+//        );
+//
+//        // 트랜잭션 기능을 분리한 UserServiceTx는 예외 발생용으로 수정할 필요가 없으니 그대로 사용한다.
+////        UserServiceTx txUserService = new UserServiceTx();
+////        txUserService.setTransactionManager(transactionManager);
+////        txUserService.setUserService(testUserService);
+//
+////        testUserServiceImpl.setTransactionManager(transactionManager);  // userService 빈의 프로퍼티 설정과 동일한 수동 DI
+////        testUserServiceImpl.setMailSender(mailSender);
+//
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        try {
+//            // TestUserService 는 업그레이드 작업 중에 예외가 발생해야 한다. 정상 종료라면 문제가 있으니 실패
+////            testUserServiceImpl.upgradeLevels();
+//            txUserService.upgradeLevels();  // 트랜잭션 기능을 분리한 오브젝트를 통해 예외 발생용 TestUserService 가 호출되게 해야 한다.
+//            fail("TestUserServiceException expected");
+//        } catch (TestUserServiceException e) {  // TestUserService 가 던져주는 예외를 잡아서 계속 진행되도록 한다. 그 외의 예외라면 테스트 실패
+//        }
+//        // 예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었나 확인
+//        checkLevelUpgraded(users.get(1), false);
+//    }
     /*
     *
     * */
