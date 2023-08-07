@@ -30,4 +30,8 @@ dependencies {
     implementation group: 'org.springframework', name: 'spring-context-support', version: '5.2.19.RELEASE'
     // https://mvnrepository.com/artifact/org.mockito/mockito-all
     testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.8.4'
+    // https://mvnrepository.com/artifact/aopalliance/aopalliance
+    implementation group: 'aopalliance', name: 'aopalliance', version: '1.0'
+    // https://mvnrepository.com/artifact/org.springframework/spring-aop
+    implementation group: 'org.springframework', name: 'spring-aop', version: '3.0.7.RELEASE'
 }
