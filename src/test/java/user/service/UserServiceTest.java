@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
@@ -46,22 +47,20 @@ public class UserServiceTest {
     List<User> users;   // 테스트 픽스처
 
     /*
-     * 트랜잭션 프록시 팩토리 빈을 적용한 테스트
+     * ProxyFactoryBean 을 이용한 트랜잭션 테스트
      * */
-    @Autowired
-    ApplicationContext context; // 팩토리 빈을 가져오려면 애플리케이션 컨텍스트가 필요하다.
-
     @Test
-    @DirtiesContext // 다이내믹 프록시 팩토리 빈을 직접 만들어 사용할 때는 없앴다가 다시 등장한 컨텍스트 무효화 애노테이션
-    public void upgradeAllOrNothing() throws Exception {
+    @DirtiesContext // 컨텍스트 설정을 변경하기 때문에 여전히 필요하다.
+    public void upgradeAllOrNothing() {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(userDao);
         testUserService.setMailSender(mailSender);
 
-        // 팩토리 빈 자체를 가져와야 하므로 빈 이름에 & 를 반드시 넣는다.
-        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);  // 테스트용 타깃 주입
+        //userService 빈은 이제 스프링의 ProxyFactoryBean 이다.
+        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
         txProxyFactoryBean.setTarget(testUserService);
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();   // 변경된 타깃 설정을 이용해서 트랜잭션 다이내믹 프록시 오브젝트를 다시 생성한다.
+        // FactoryBean 타입이므로 동일하게 getObject() 로 프록시를 가져온다.
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         userDao.deleteAll();
         for (User user : users) {
@@ -76,6 +75,39 @@ public class UserServiceTest {
 
         checkLevelUpgraded(users.get(1), false);
     }
+
+
+    /*
+     * 트랜잭션 프록시 팩토리 빈을 적용한 테스트
+     * */
+    @Autowired
+    ApplicationContext context; // 팩토리 빈을 가져오려면 애플리케이션 컨텍스트가 필요하다.
+
+//    @Test
+//    @DirtiesContext // 다이내믹 프록시 팩토리 빈을 직접 만들어 사용할 때는 없앴다가 다시 등장한 컨텍스트 무효화 애노테이션
+//    public void upgradeAllOrNothing() throws Exception {
+//        TestUserService testUserService = new TestUserService(users.get(3).getId());
+//        testUserService.setUserDao(userDao);
+//        testUserService.setMailSender(mailSender);
+//
+//        // 팩토리 빈 자체를 가져와야 하므로 빈 이름에 & 를 반드시 넣는다.
+//        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);  // 테스트용 타깃 주입
+//        txProxyFactoryBean.setTarget(testUserService);
+//        UserService txUserService = (UserService) txProxyFactoryBean.getObject();   // 변경된 타깃 설정을 이용해서 트랜잭션 다이내믹 프록시 오브젝트를 다시 생성한다.
+//
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        try {
+//            txUserService.upgradeLevels();
+//            fail("TestUserServiceException expected");
+//        } catch (TestUserServiceException e) {
+//        }
+//
+//        checkLevelUpgraded(users.get(1), false);
+//    }
 
     /*
     * 트랜잭션 매니저를 수동 DI 하도록 수정한 테스트
