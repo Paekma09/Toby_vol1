@@ -3,6 +3,8 @@ package learningtest.jdk.proxy;
 import org.aopalliance.intercept.MethodInvocation;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.Test;
+import org.springframework.aop.ClassFilter;
+import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
@@ -15,6 +17,54 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DynamicProxyTest {
+
+    // 확장 포인트컷 테스트
+    @Test
+    public void classNamePointcutAdvisor() {
+        // 포인트컷 준비
+        NameMatchMethodPointcut classMethodPointcut = new NameMatchMethodPointcut() {   // 익명 내부 클래스 방식으로 클래스를 정의한다.
+            @Override
+            public ClassFilter getClassFilter() {   // 익명 내부 클래스 방식으로 클래스를 정의한다.
+                return new ClassFilter() {
+                    @Override
+                    public boolean matches(Class<?> clazz) {
+                        return clazz.getSimpleName().startsWith("HelloT");  // 클래스 이름이 HelloT로 시작하는 것만 선정한다.
+                    }
+                };
+            }
+        };
+        classMethodPointcut.setMappedName("SayH*"); // SayH로 시작하는 메소드 이름을 가진 메소드만 선정한다.
+
+        // 테스트
+        checkAdviced(new HelloTarget(), classMethodPointcut, true); // 적용 클래스다.
+
+        class HelloWorld extends HelloTarget {};
+        checkAdviced(new HelloWorld(), classMethodPointcut, false); // 적용 클래스가 아니다.
+
+        class HelloToby extends HelloTarget {};
+        checkAdviced(new HelloToby(), classMethodPointcut, true);   // 적용 클래스다.
+
+    }
+
+    private void checkAdviced(Object target, Pointcut pointcut, boolean adviced) {  // adviced -> 적용 대상인가?
+        ProxyFactoryBean pfBean = new ProxyFactoryBean();
+        pfBean.setTarget(target);
+        pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+        Hello proxiedHello = (Hello) pfBean.getObject();
+
+        if (adviced) {
+            // 메소드 선정 방식을 통해 어드바이스 적용
+            assertThat(proxiedHello.sayHello("Toby"), is("HELLO TOBY"));
+            assertThat(proxiedHello.sayHi("Toby"), is("HI TOBY"));
+
+            assertThat(proxiedHello.sayThankYou("Toby"), is("Thank You Toby"));
+        } else {
+            // 어드바이스 적용 대상 후보에서 아예 탈락
+            assertThat(proxiedHello.sayHello("Toby"), is("Hello Toby"));
+            assertThat(proxiedHello.sayHi("Toby"), is("Hi Toby"));
+            assertThat(proxiedHello.sayThankYou("Toby"), is("Thank You Toby"));
+        }
+    }
 
     // 클라이언트 역할의 테스트
     @Test

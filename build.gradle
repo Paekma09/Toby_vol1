@@ -34,4 +34,6 @@ dependencies {
     implementation group: 'aopalliance', name: 'aopalliance', version: '1.0'
     // https://mvnrepository.com/artifact/org.springframework/spring-aop
     implementation group: 'org.springframework', name: 'spring-aop', version: '3.0.7.RELEASE'
+    // https://mvnrepository.com/artifact/org.aspectj/com.springsource.org.aspectj.tools
+    implementation group: 'org.aspectj', name: 'com.springsource.org.aspectj.tools', version: '1.6.6.RELEASE'
 }
