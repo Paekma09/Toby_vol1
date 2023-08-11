@@ -37,8 +37,13 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+
+    // 같은 타입의 빈이 두 개 존재하기 때문에 필드 이름을 기준으로 주입될 빈이 결정된다. 자동 프록시 생성기에 의해 트랜잭션 부가기능이 testUserService 빈에 적용됐는지를 확인하는 것이 목적이다.
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService testUserService;
+
+//    @Autowired
+//    UserServiceImpl userServiceImpl;
     @Autowired
     UserDao userDao;
     @Autowired
@@ -47,34 +52,60 @@ public class UserServiceTest {
     List<User> users;   // 테스트 픽스처
 
     /*
-     * ProxyFactoryBean 을 이용한 트랜잭션 테스트
+     * testUserService 빈을 사용하도록 수정된 테스트
      * */
+    // 스프링 컨텍스트의 빈 설정을 변경하지 않으므로 @DirtiesContext 애노테이션은 제거됐다. 모든 테스트를 위한 DI 작업은 설정파일을 통해 서버에서 진행되므로 테스트 코드 자체는 단순해진다.
     @Test
-    @DirtiesContext // 컨텍스트 설정을 변경하기 때문에 여전히 필요하다.
     public void upgradeAllOrNothing() {
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(userDao);
-        testUserService.setMailSender(mailSender);
-
-        //userService 빈은 이제 스프링의 ProxyFactoryBean 이다.
-        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
-        // FactoryBean 타입이므로 동일하게 getObject() 로 프록시를 가져온다.
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
         }
 
         try {
-            txUserService.upgradeLevels();
+            this.testUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         } catch (TestUserServiceException e) {
         }
 
         checkLevelUpgraded(users.get(1), false);
     }
+
+    @Test
+    public void advisorAutoProxyCreator() {
+        assertThat(testUserService, is(java.lang.reflect.Proxy.class)); // 프록시호 변경된 오브젝트인지 확인한다.
+    }
+
+
+    /*
+     * ProxyFactoryBean 을 이용한 트랜잭션 테스트
+     * */
+//    @Test
+//    @DirtiesContext // 컨텍스트 설정을 변경하기 때문에 여전히 필요하다.
+//    public void upgradeAllOrNothing() {
+//        TestUserService testUserService = new TestUserService(users.get(3).getId());
+//        testUserService.setUserDao(userDao);
+//        testUserService.setMailSender(mailSender);
+//
+//        //userService 빈은 이제 스프링의 ProxyFactoryBean 이다.
+//        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
+//        txProxyFactoryBean.setTarget(testUserService);
+//        // FactoryBean 타입이므로 동일하게 getObject() 로 프록시를 가져온다.
+//        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
+//
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        try {
+//            txUserService.upgradeLevels();
+//            fail("TestUserServiceException expected");
+//        } catch (TestUserServiceException e) {
+//        }
+//
+//        checkLevelUpgraded(users.get(1), false);
+//    }
 
 
     /*
@@ -405,23 +436,33 @@ public class UserServiceTest {
 //        checkLevelUpgraded(users.get(1), false);
 //    }
 
+    // 수정한 테스트용 UserService 구현 클래스
+    static class TestUserServiceImpl extends UserServiceImpl {  // 포인트컷의 클래스 필터에 선정되도록 이름 변경.
+        private String id = "chubss";   // 테스트 픽스처의 users(3)의 id 값을 고정시켜버렸다.
 
-    // UserService 의 테스트용 대역 클래스
-    static class TestUserService extends UserServiceImpl {
-        private String id;
-
-        private TestUserService(String id) {    //예외를 발생시킬 User 오브젝트의 id 를 지정할 수 있게 만든다.
-            this.id = id;
-        }
-
-        // UserService 의 메소드를 오버라이드 한다.
         protected void upgradeLevel(User user) {
-            if (user.getId().equals(this.id)) { // 지정된 id의 User 오브젝트가 발견되면 예외를 던져서 작업을 강제로 중단시킨다.
-                throw new TestUserServiceException();
-            }
+            if (user.getId().equals(this.id)) throw new TestUserServiceException();
             super.upgradeLevel(user);
         }
     }
+
+
+    // UserService 의 테스트용 대역 클래스
+//    static class TestUserService extends UserServiceImpl {
+//        private String id;
+//
+//        private TestUserService(String id) {    //예외를 발생시킬 User 오브젝트의 id 를 지정할 수 있게 만든다.
+//            this.id = id;
+//        }
+//
+//        // UserService 의 메소드를 오버라이드 한다.
+//        protected void upgradeLevel(User user) {
+//            if (user.getId().equals(this.id)) { // 지정된 id의 User 오브젝트가 발견되면 예외를 던져서 작업을 강제로 중단시킨다.
+//                throw new TestUserServiceException();
+//            }
+//            super.upgradeLevel(user);
+//        }
+//    }
 
     // 테스트용 예외
     static class TestUserServiceException extends RuntimeException {

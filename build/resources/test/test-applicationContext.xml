@@ -31,21 +31,38 @@
 <!--    </bean>-->
 
 <!--    ProxyFactoryBean 설정 -->
-    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target" ref="userServiceImpl"/>
-<!--    어드바이스와 어드바이저를 동시에 설정해줄 수 있는 프로퍼티. 리스트에 어드바이스나 어드바이저의 빈 아이디를 값으로 넣어주면 된다. 기존의 ref 애트리뷰트를 사용하는 DI 와는 방식이 다름에 주의해야 한다.-->
-        <property name="interceptorNames">
-            <list>
-<!--            한 개 이상의 <value> 태그를 넣을 수 있다.-->
-                <value>transactionAdvisor</value>
-            </list>
-        </property>
+<!--    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">-->
+<!--        <property name="target" ref="userServiceImpl"/>-->
+<!--&lt;!&ndash;    어드바이스와 어드바이저를 동시에 설정해줄 수 있는 프로퍼티. 리스트에 어드바이스나 어드바이저의 빈 아이디를 값으로 넣어주면 된다. 기존의 ref 애트리뷰트를 사용하는 DI 와는 방식이 다름에 주의해야 한다.&ndash;&gt;-->
+<!--        <property name="interceptorNames">-->
+<!--            <list>-->
+<!--&lt;!&ndash;            한 개 이상의 <value> 태그를 넣을 수 있다.&ndash;&gt;-->
+<!--                <value>transactionAdvisor</value>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+<!--    어드바이저를 이용하는 자동 프록시 생성기 등록 (AOP) -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+<!--    AOP 포인트컷 빈 -->
+    <bean id="transactionPointcut" class="user.service.NameMatchClassMethodPointcut">
+                                    <!--   클래스 이름 패턴 -->
+        <property name="mappedClassName" value="*ServiceImpl"/>
+                            <!--   메소드 이름 패턴 -->
+        <property name="mappedName" value="upgrade*"/>
     </bean>
 
-    <bean id="userServiceImpl" class="user.service.UserServiceImpl">
+<!--    프록시 팩토리 빈을 제거한 후의 빈 설정 -->
+    <bean id="userService" class="user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
     </bean>
+
+<!--    <bean id="userServiceImpl" class="user.service.UserServiceImpl">-->
+<!--        <property name="userDao" ref="userDao"/>-->
+<!--        <property name="mailSender" ref="mailSender"/>-->
+<!--    </bean>-->
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
@@ -57,9 +74,9 @@
     </bean>
 
 <!--    포인트컷 빈 설정 -->
-    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-        <property name="mappedName" value="upgrade*"/>
-    </bean>
+<!--    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">-->
+<!--        <property name="mappedName" value="upgrade*"/>-->
+<!--    </bean>-->
 
 <!--    어드바이저 빈 설정 -->
     <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
@@ -74,6 +91,10 @@
 <!--    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
 <!--        <property name="host" value="mail.server.com"/>-->
 <!--    </bean>-->
+
+<!--    테스트용 UserService 의 등록 -->
+<!--    스태틱 멤버 클래스는 $로 지정한다. / 프로퍼티 정의를 포함해서 userService 빈의 설정을 상속받는다. -->
+    <bean id="testUserService" class="user.service.UserServiceTest$TestUserServiceImpl" parent="userService"/>
 
     <bean id="mailSender" class="user.service.DummyMailSender">
         <property name="host" value="mail.server.com"/>
