@@ -46,11 +46,16 @@
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
 <!--    AOP 포인트컷 빈 -->
-    <bean id="transactionPointcut" class="user.service.NameMatchClassMethodPointcut">
-                                    <!--   클래스 이름 패턴 -->
-        <property name="mappedClassName" value="*ServiceImpl"/>
-                            <!--   메소드 이름 패턴 -->
-        <property name="mappedName" value="upgrade*"/>
+<!--    <bean id="transactionPointcut" class="user.service.NameMatchClassMethodPointcut">-->
+<!--                                    &lt;!&ndash;   클래스 이름 패턴 &ndash;&gt;-->
+<!--        <property name="mappedClassName" value="*ServiceImpl"/>-->
+<!--                            &lt;!&ndash;   메소드 이름 패턴 &ndash;&gt;-->
+<!--        <property name="mappedName" value="upgrade*"/>-->
+<!--    </bean>-->
+
+<!--    포인트컷 표현식을 사용한 빈 설정 -->
+    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+        <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))"/>
     </bean>
 
 <!--    프록시 팩토리 빈을 제거한 후의 빈 설정 -->
