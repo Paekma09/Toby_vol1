@@ -4,19 +4,24 @@
 <!-- tx 스키마의 전용 태그 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/cache"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 						   http://www.springframework.org/schema/tx
-						   http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+						   http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 <!--	AOP 설정을 담는 부모 태그다. 필요에 따라 AspectJAdvisorAutoProxyCreator 를 빈으로 등록해준다. -->
 	<aop:config>
 <!--		expression 의 표현식을 프로퍼티로 가진 AspectJExpressionPointcut 을 빈으로 등록해준다. -->
 		<aop:pointcut id="transactionPointcut" expression="execution(* *..*ServiceImpl.upgrade*(..))"/>
 <!--		advice 와 pointcut 의 ref 를 프로퍼티로 갖는 DefaultBeanFactoryPointcutAdvisor 를 등록해준다. -->
 		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut"/>
+		<!--		비지니스로직 서비스 클래스에 적용되는 기본 트랜잭션 속성 -->
+		<aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)"/>
+		<!--		배치 작업 클래스에 적용되는 특별한 트랜잭션 속성 -->
+<!--		<aop:advisor advice-ref="batchTxAdvice" pointcut="execution(a.b.*BatchJob.*.(..))"/>-->
 	</aop:config>
 
 	<!--	포인트컷을 내장한 어드바이저 태그 -->
@@ -43,16 +48,25 @@
 
 <!--	이 태그에 의해 TransactionInterceptor 빈이 등록된다 -->
 									<!-- 트랜잭션 매니저의 빈 아이디가 transactionManager 라면 생략 가능	-->
-<!--	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">-->
-	<!--		<tx:attributes>-->
-	<!--									&lt;!&ndash; Enumeration 으로 스키마에 값이 정의되어 있으므로 오타가 있으면 XML 유효성 검사만으로 확인 가능하다. &ndash;&gt;-->
-	<!--			<tx:method name="get*" propagation="REQUIRED" read-only="true" timeout="30"/>-->
-	<!--																&lt;!&ndash; Enumeration 으로 스키마에 값이 정의되어 있으므로 오타가 있으면 XML 유효성 검사만으로 확인 가능하다. &ndash;&gt;-->
-	<!--			<tx:method name="upgrade*" propagation="REQUIRED_NEW" isolation="SERIALIZABLE"/>-->
-	<!--								&lt;!&ndash; 디퐅르 값이 스키마에 정의 되어 있으므로 REQUIRED 라면 아예 생략도 가능하다. &ndash;&gt;-->
-	<!--			<tx:method name="*" propagation="REQUIRED"/>-->
-	<!--		</tx:attributes>-->
-	<!--	</tx:advice>-->
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+									<!-- Enumeration 으로 스키마에 값이 정의되어 있으므로 오타가 있으면 XML 유효성 검사만으로 확인 가능하다. -->
+									<!-- get 으로 시작하는 메소드에 대해서는 읽기 전용 속성을 부여한다. 이 메소드가 트랜잭션의 실제 시작 위치가 아니라면 읽기 전용 속성은 무시된다. -->
+			<tx:method name="get*" propagation="REQUIRED" read-only="true" timeout="30"/>
+																<!-- Enumeration 으로 스키마에 값이 정의되어 있으므로 오타가 있으면 XML 유효성 검사만으로 확인 가능하다. -->
+			<tx:method name="upgrade*" propagation="REQUIRES_NEW" isolation="SERIALIZABLE"/>
+								<!-- 디퐅르 값이 스키마에 정의 되어 있으므로 REQUIRED 라면 아예 생략도 가능하다. -->
+								<!-- 모든 타깃 메소드에 기본 트랜잭션 속성 지원 -->
+								<!-- get 으로 시작하지 않는 나머지 메소드에는 기본 트랜잭션 속성을 지정한다. 순서가 뒤바뀌지 않도록 주의한다. -->
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	<!--		배치 작업 클래스에 적용되는 특별한 트랜잭션 속성 -->
+<!--	<tx:advice id="batchTxAdvice" >-->
+<!--		<tx:attributes>-->
+<!--			<tx:method name="*"/>-->
+<!--		</tx:attributes>-->
+<!--	</tx:advice>-->
 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"/>
