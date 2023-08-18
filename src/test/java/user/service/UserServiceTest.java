@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -434,12 +435,37 @@ public class UserServiceTest {
 //    }
 
     // 수정한 테스트용 UserService 구현 클래스
-    static class TestUserServiceImpl extends UserServiceImpl {  // 포인트컷의 클래스 필터에 선정되도록 이름 변경.
-        private String id = "chubss";   // 테스트 픽스처의 users(3)의 id 값을 고정시켜버렸다.
+//    static class TestUserServiceImpl extends UserServiceImpl {  // 포인트컷의 클래스 필터에 선정되도록 이름 변경.
+//        private String id = "chubss";   // 테스트 픽스처의 users(3)의 id 값을 고정시켜버렸다.
+//
+//        protected void upgradeLevel(User user) {
+//            if (user.getId().equals(this.id)) throw new TestUserServiceException();
+//            super.upgradeLevel(user);
+//        }
+//    }
+
+    // 읽기 전용 속성 테스트
+//    @Test   // 일단은 언떤 예외가 던저질지 모르기 때문에 expected 없이 테스트를 작성한다.
+    @Test(expected = TransientDataAccessException.class)    // 예외 확인 테스트로 수정
+    public void readOnlyTransactionAttribute() {
+        testUserService.getAll();   // 트랜잭션 속성이 제대로 적용 됐다면 여기서 읽기 전용 속성을 위반했기 때문에 예외가 발생해야 한다.
+    }
+
+    // 읽기 전용 메소드에 쓰기 작업을 추가한 테스트용 클래스
+    static class TestUserService extends UserServiceImpl {
+        private String id = "chubss";
 
         protected void upgradeLevel(User user) {
             if (user.getId().equals(this.id)) throw new TestUserServiceException();
             super.upgradeLevel(user);
+        }
+
+        // 읽기 전용 트랜잭션의 대상인 get 으로 시작하는 메소드를 오버라이드한다.
+        public List<User> getAll() {
+            for (User user : super.getAll()) {
+                super.update(user); // 강제로 쓰기 시도를 한다. 여기서 읽기 전용 속성으로 인한 예외가 발생해야 한다.
+            }
+            return null;    // 메소드가 끝나기 전에 예외가 발생해야 하니 리턴 값은 별 의미가 없다. 적당한 값을 넣어서 컴파일만 되게 한다.
         }
     }
 
