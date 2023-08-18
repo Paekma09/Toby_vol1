@@ -6,6 +6,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import user.domain.User;
 
+import java.util.List;
+
 // 위임기능을 가진 UserServiceTx 클래스
 public class UserServiceTx implements UserService{
 
@@ -25,6 +27,26 @@ public class UserServiceTx implements UserService{
     @Override
     public void add(User user) {
         userService.add(user);
+    }
+
+    @Override
+    public User get(String id) {
+        return null;
+    }
+
+    @Override
+    public List<User> getAll() {
+        return null;
+    }
+
+    @Override
+    public void deleteAll() {
+
+    }
+
+    @Override
+    public void update(User user) {
+
     }
 
     @Override

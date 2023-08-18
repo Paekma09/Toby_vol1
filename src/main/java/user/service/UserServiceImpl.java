@@ -198,6 +198,29 @@ public class UserServiceImpl implements UserService{
         userDao.add(user);
     }
 
+    /*
+    * DAO 로 위임하도록 만든다. 필요한 부가 로직을 넣어도 좋다.
+    * */
+    @Override
+    public User get(String id) {
+        return userDao.get(id);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return userDao.getAll();
+    }
+
+    @Override
+    public void deleteAll() {
+        userDao.deleteAll();
+    }
+
+    @Override
+    public void update(User user) {
+        userDao.update(user);
+    }
+
     // 레벨 업그레이드 작업 메소드
 //    private void upgradeLevel(User user) {
 //        if (user.getLevel() == Level.BASIC) {
