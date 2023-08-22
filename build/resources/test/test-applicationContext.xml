@@ -21,20 +21,23 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+<!--    트랜잭션 애노테이션 사용 -->
+    <tx:annotation-driven />
+
 <!--    빈 이름을 사용한 표현식을 갖는 포인트컷과 어드바이저 -->
-    <aop:config>
-        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)"/>
-    </aop:config>
+<!--    <aop:config>-->
+<!--        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)"/>-->
+<!--    </aop:config>-->
 
 <!--    tx 스키마의 태그를 이용한 트랜잭션 어드바이스 정의 -->
     <!--    transactionManager 는 트랜잭션 매니저 빈 아이디가 "transactionManager" 라면 생략할 수 있다. -->
-    <tx:advice id="transactionAdvice">
-        <tx:attributes>
-            <!--    propagation 이 "REQUIRED" 라면 생략할 수 있다. -->
-            <tx:method name="get*" read-only="true"/>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
+<!--    <tx:advice id="transactionAdvice">-->
+<!--        <tx:attributes>-->
+<!--            &lt;!&ndash;    propagation 이 "REQUIRED" 라면 생략할 수 있다. &ndash;&gt;-->
+<!--            <tx:method name="get*" read-only="true"/>-->
+<!--            <tx:method name="*"/>-->
+<!--        </tx:attributes>-->
+<!--    </tx:advice>-->
 
 <!--    트랜잭션 속성을 사용하는 어드바이스 -->
 <!--    <bean id="transactionAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->

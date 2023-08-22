@@ -12,7 +12,7 @@ import user.domain.User;
 
 import java.util.List;
 
-@Transactional
+//@Transactional
 public class UserServiceImpl implements UserService{
     // 상수의 도입
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;

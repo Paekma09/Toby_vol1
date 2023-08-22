@@ -1,12 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="user.service.UserServiceTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-08-18T14:14:39" hostname="DESKTOP-CR5B87G" time="0.62">
+<testsuite name="user.service.UserServiceTest" tests="8" skipped="0" failures="2" errors="0" timestamp="2023-08-22T14:34:23" hostname="DESKTOP-CR5B87G" time="1.035">
   <properties/>
-  <testcase name="readOnlyTransactionAttribute" classname="user.service.UserServiceTest" time="0.62"/>
+  <testcase name="mockUpgradeLevels" classname="user.service.UserServiceTest" time="0.661"/>
+  <testcase name="advisorAutoProxyCreator" classname="user.service.UserServiceTest" time="0.026"/>
+  <testcase name="upgradeAllOrNothing" classname="user.service.UserServiceTest" time="0.11">
+    <failure message="org.springframework.transaction.UnexpectedRollbackException: Transaction rolled back because it has been marked as rollback-only" type="org.springframework.transaction.UnexpectedRollbackException">org.springframework.transaction.UnexpectedRollbackException: Transaction rolled back because it has been marked as rollback-only
+	at app//org.springframework.transaction.support.AbstractPlatformTransactionManager.processRollback(AbstractPlatformTransactionManager.java:871)
+	at app//org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:708)
+	at app//org.springframework.test.context.transaction.TransactionContext.endTransaction(TransactionContext.java:131)
+	at app//org.springframework.test.context.transaction.TransactionalTestExecutionListener.afterTestMethod(TransactionalTestExecutionListener.java:230)
+	at app//org.springframework.test.context.TestContextManager.afterTestMethod(TestContextManager.java:441)
+	at app//org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks.evaluate(RunAfterTestMethodCallbacks.java:94)
+	at app//org.springframework.test.context.junit4.statements.SpringRepeat.evaluate(SpringRepeat.java:84)
+	at app//org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at app//org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:251)
+	at app//org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:97)
+	at app//org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+	at app//org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+	at app//org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+	at app//org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+	at app//org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+	at app//org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:61)
+	at app//org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:70)
+	at app//org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at app//org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+	at app//org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:190)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:108)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:40)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:60)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:52)
+	at java.base@11.0.16.1/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base@11.0.16.1/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base@11.0.16.1/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base@11.0.16.1/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$2.run(TestWorker.java:176)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:129)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:100)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:60)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:113)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:65)
+	at app//worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at app//worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+</failure>
+  </testcase>
+  <testcase name="add" classname="user.service.UserServiceTest" time="0.057"/>
+  <testcase name="bean" classname="user.service.UserServiceTest" time="0.05"/>
+  <testcase name="upgradeLevels" classname="user.service.UserServiceTest" time="0.034"/>
+  <testcase name="readOnlyTransactionAttribute" classname="user.service.UserServiceTest" time="0.035">
+    <failure message="java.lang.AssertionError: Expected exception: org.springframework.dao.TransientDataAccessException" type="java.lang.AssertionError">java.lang.AssertionError: Expected exception: org.springframework.dao.TransientDataAccessException
+	at org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:34)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestMethodCallbacks.evaluate(RunBeforeTestMethodCallbacks.java:75)
+	at org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks.evaluate(RunAfterTestMethodCallbacks.java:86)
+	at org.springframework.test.context.junit4.statements.SpringRepeat.evaluate(SpringRepeat.java:84)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:251)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:97)
+	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:61)
+	at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:70)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:190)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:108)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:40)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:60)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:52)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$2.run(TestWorker.java:176)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:129)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:100)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:60)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:113)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:65)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+</failure>
+  </testcase>
+  <testcase name="transactionSync" classname="user.service.UserServiceTest" time="0.055"/>
   <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[8월 18, 2023 11:14:38 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getDefaultTestExecutionListenerClassNames
+  <system-err><![CDATA[8월 22, 2023 11:34:22 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getDefaultTestExecutionListenerClassNames
 정보: Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
-8월 18, 2023 11:14:38 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getTestExecutionListeners
-정보: Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@68d279ec, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@258d79be, org.springframework.test.context.support.DirtiesContextTestExecutionListener@14f9390f, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6c0d7c83, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@176b75f7, org.springframework.test.context.event.EventPublishingTestExecutionListener@5965be2d]
+8월 22, 2023 11:34:22 오후 org.springframework.test.context.support.AbstractTestContextBootstrapper getTestExecutionListeners
+정보: Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@571c5681, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@488d1cd7, org.springframework.test.context.support.DirtiesContextTestExecutionListener@68dc098b, org.springframework.test.context.transaction.TransactionalTestExecutionListener@38ba6ce3, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@d278d2b, org.springframework.test.context.event.EventPublishingTestExecutionListener@2d6c53fc]
 Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@f72203, testMethod = mockUpgradeLevels@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [false]
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.transaction.TransactionContext endTransaction
+정보: Committed transaction for test: [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@f72203, testMethod = mockUpgradeLevels@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@36fcf6c0, testMethod = advisorAutoProxyCreator@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [false]
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.transaction.TransactionContext endTransaction
+정보: Committed transaction for test: [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@36fcf6c0, testMethod = advisorAutoProxyCreator@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@4fad6218, testMethod = upgradeAllOrNothing@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [false]
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.TestContextManager logException
+경고: Caught exception while invoking 'afterTestMethod' callback on TestExecutionListener [org.springframework.test.context.transaction.TransactionalTestExecutionListener@38ba6ce3] for test method [public void user.service.UserServiceTest.upgradeAllOrNothing()] and test instance [user.service.UserServiceTest@4fad6218]
+org.springframework.transaction.UnexpectedRollbackException: Transaction rolled back because it has been marked as rollback-only
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processRollback(AbstractPlatformTransactionManager.java:871)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:708)
+	at org.springframework.test.context.transaction.TransactionContext.endTransaction(TransactionContext.java:131)
+	at org.springframework.test.context.transaction.TransactionalTestExecutionListener.afterTestMethod(TransactionalTestExecutionListener.java:230)
+	at org.springframework.test.context.TestContextManager.afterTestMethod(TestContextManager.java:441)
+	at org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks.evaluate(RunAfterTestMethodCallbacks.java:94)
+	at org.springframework.test.context.junit4.statements.SpringRepeat.evaluate(SpringRepeat.java:84)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:251)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:97)
+	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:61)
+	at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:70)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:190)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:108)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:40)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:60)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:52)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$2.run(TestWorker.java:176)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:129)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:100)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:60)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:113)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:65)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@8ee0c23, testMethod = add@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [true]
+8월 22, 2023 11:34:23 오후 org.springframework.test.context.transaction.TransactionContext endTransaction
+정보: Rolled back transaction for test: [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@8ee0c23, testMethod = add@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@3ed03652, testMethod = bean@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [false]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext endTransaction
+정보: Committed transaction for test: [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@3ed03652, testMethod = bean@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@33d53216, testMethod = upgradeLevels@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [false]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext endTransaction
+정보: Committed transaction for test: [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@33d53216, testMethod = upgradeLevels@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@228cea97, testMethod = readOnlyTransactionAttribute@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [false]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext endTransaction
+정보: Committed transaction for test: [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@228cea97, testMethod = readOnlyTransactionAttribute@UserServiceTest, testException = java.lang.AssertionError: Expected exception: org.springframework.dao.TransientDataAccessException, mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext startTransaction
+정보: Began transaction (1) for test context [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@47fbc56, testMethod = transactionSync@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]; transaction manager [org.springframework.jdbc.datasource.DataSourceTransactionManager@540dbda9]; rollback [false]
+8월 22, 2023 11:34:24 오후 org.springframework.test.context.transaction.TransactionContext endTransaction
+정보: Committed transaction for test: [DefaultTestContext@8ed9cf testClass = UserServiceTest, testInstance = user.service.UserServiceTest@47fbc56, testMethod = transactionSync@UserServiceTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@377008df testClass = UserServiceTest, locations = '{classpath:/test-applicationContext.xml}', classes = '{}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{}', contextCustomizers = set[[empty]], contextLoader = 'org.springframework.test.context.support.DelegatingSmartContextLoader', parent = [null]], attributes = map[[empty]]]
 ]]></system-err>
 </testsuite>
