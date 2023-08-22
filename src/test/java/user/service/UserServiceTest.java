@@ -10,9 +10,13 @@ import org.springframework.dao.TransientDataAccessException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
@@ -31,6 +35,9 @@ import static user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
+@Transactional
+//@TransactionConfiguration(defaultRollback=false) Deprecated 됨. 대신
+@Rollback(false)    // 롤백 여부에 대한 기본 설정과 트랜잭션 매니저 빈을 지정하는데 사용할 수 있다. 디폴트 트랜잭션 매니저 아이디는 괜례를 따라서 transactionManager 로 되어 있다.
 public class UserServiceTest {
 
     @Autowired
@@ -73,6 +80,95 @@ public class UserServiceTest {
     public void advisorAutoProxyCreator() {
         assertThat(testUserService, is(java.lang.reflect.Proxy.class)); // 프록시호 변경된 오브젝트인지 확인한다.
     }
+
+    // 트랜잭션 매니져를 이용해 트랜잭션을 미리 시작하게 만드는 테스트
+//    @Test
+//    public void transactionSync() {
+//        // 트랜잭션 정의는 기본값을 사용한다.
+//        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+//        txDefinition.setReadOnly(true); // 읽기 전용 트랜잭션으로 정의한다.
+//        // 트랜잭션 매니져에게 트랜잭션을 요청한다. 기존에 시작된 트랜잭션이 없으니 새로운 트랜잭션을 시작시키고 트랜잭션 정보를 돌려준다. 동시에 만즐어진 트랜잭션을 다른 곳에서도 사용할 수 있도록 동기화 한다.
+//        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+//
+//        // 앞에서 만들어진 트랜잭션에 모두 참여한다.
+//        userService.deleteAll();    // 테스트 코드에서 시작한 트랜잭션에 참여한다면 읽기전용 속성을 위반했으니 예외가 발생해야 한다.
+//
+//        userService.add(users.get(0));
+//        userService.add(users.get(1));
+//
+//        // 앞에서 시작한 트랜잭션을 커밋한다.
+//        transactionManager.commit(txStatus);
+//    }
+
+    // DAO 를 사용하는 트랜잭션 동기화 테스트
+//    @Test
+//    public void transactionSync() {
+//        // 트랜잭션 정의는 기본값을 사용한다.
+//        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+//        txDefinition.setReadOnly(true); // 읽기 전용 트랜잭션으로 정의한다.
+//        // 트랜잭션 매니져에게 트랜잭션을 요청한다. 기존에 시작된 트랜잭션이 없으니 새로운 트랜잭션을 시작시키고 트랜잭션 정보를 돌려준다. 동시에 만즐어진 트랜잭션을 다른 곳에서도 사용할 수 있도록 동기화 한다.
+//        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+//
+//        // JdbcTemplate 을 통해 이미 시작된 트랜잭션이 있다면 자동으로 참여한다. 따라서 예외가 발생한다.
+//        userDao.deleteAll();
+//
+//        // 앞에서 시작한 트랜잭션을 커밋한다.
+//        transactionManager.commit(txStatus);
+//    }
+
+    // 트랜잭션의 롤백 테스트
+//    @Test
+//    public void transactionSync() {
+//        // 트랜잭션을 롤백했을 때 돌아갈 초기 상태를 만들기 위해 트랜잭션 시작전에 초기화를 해둔다.
+//        userDao.deleteAll();
+//        assertThat(userDao.getCount(), is(0));
+//
+//        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+//        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+//
+//        userService.add(users.get(0));
+//        userService.add(users.get(1));
+//        assertThat(userDao.getCount(), is(2));  // userDao 의 getCount() 메소드도 같은 트랜잭션에서 동작한다. add() 에 의해 두 개가 등록되었는지 확인해 둔다.
+//
+//        transactionManager.rollback(txStatus);  // 강제로 롤백한다. 트랜잭션 시작 전 상태로 돌아가야 한다.
+//
+//        assertThat(userDao.getCount(), is(0));  // add() 의 작업이 취소되고 트랜잭션 시작 이전의 상태임을 확인 할 수 있다.
+//    }
+
+    // 롤백 테스트
+//    @Test
+//    public void transactionSync() {
+//        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+//        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);   // 테스트 안의 모든 작업을 하나의 트랜잭션으로 통합한다.
+//
+//        try {
+//            // 테스트 안의 모든 작업을 하나의 트랜잭션으로 통합한다.
+//            userService.deleteAll();
+//            userService.add(users.get(0));
+//            userService.add(users.get(1));
+//        } finally {
+//            // 테스트 결과가 어떻든 상관없이 테스트가 끝나면 무조건 롤백한다. 테스트 중에 발생했던 DB의 변경 사항은 모두 이전 상태로 복구된다.
+//            transactionManager.rollback(txStatus);
+//        }
+//    }
+
+    // 테스트에 적용된 @Transactional
+    // 테스트 트랜잭션을 커밋시키도록 설정한 테스트
+    @Test
+    @Transactional
+    @Rollback(value = false)
+    public void transactionSync() {
+            userService.deleteAll();
+            userService.add(users.get(0));
+            userService.add(users.get(1));
+    }
+
+    // 트랜잭션 적용 확인
+//    @Test
+//    @Transactional(readOnly = true)
+//    public void transactionSync() {
+//        userService.deleteAll();    // @Transactional 에 의해 시작된 트랜잭션에 참여하므로 읽기 전용 속성 위반으로 예외가 발생한다.
+//    }
 
 
     /*
@@ -394,6 +490,7 @@ public class UserServiceTest {
 
     // add()메소드의 테스트
     @Test
+    @Rollback   // 메소드에서 디폴트 설정과 그 밖의 롤백 방법으로 재설정할 수 있다.
     public void add() {
         userDao.deleteAll();
 
