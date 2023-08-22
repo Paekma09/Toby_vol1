@@ -4,6 +4,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import user.dao.UserDao;
 import user.domain.Level;
@@ -11,6 +12,7 @@ import user.domain.User;
 
 import java.util.List;
 
+@Transactional
 public class UserServiceImpl implements UserService{
     // 상수의 도입
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
