@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
@@ -10,7 +17,37 @@
         <property name="password" value="1234"/>
     </bean>
 
-<!--    <bean id="userService" class="user.service.UserServiceImpl">-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+<!--    빈 이름을 사용한 표현식을 갖는 포인트컷과 어드바이저 -->
+    <aop:config>
+        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)"/>
+    </aop:config>
+
+<!--    tx 스키마의 태그를 이용한 트랜잭션 어드바이스 정의 -->
+    <!--    transactionManager 는 트랜잭션 매니저 빈 아이디가 "transactionManager" 라면 생략할 수 있다. -->
+    <tx:advice id="transactionAdvice">
+        <tx:attributes>
+            <!--    propagation 이 "REQUIRED" 라면 생략할 수 있다. -->
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+<!--    트랜잭션 속성을 사용하는 어드바이스 -->
+<!--    <bean id="transactionAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->
+<!--        <property name="transactionManager" ref="transactionManager"/>-->
+<!--        <property name="transactionAttributes">-->
+<!--            <props>-->
+<!--                <prop key="get*">PROPAGATION_REQUIRED, readOnly</prop>-->
+<!--                <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--            </props>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+    <!--    <bean id="userService" class="user.service.UserServiceImpl">-->
 <!--        <property name="userDao" ref="userDao"/>-->
 <!--        <property name="transactionManager" ref="transactionManager"/>-->
 <!--        <property name="mailSender" ref="mailSender"/>-->
@@ -43,7 +80,7 @@
 <!--    </bean>-->
 
 <!--    어드바이저를 이용하는 자동 프록시 생성기 등록 (AOP) -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+<!--    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>-->
 
 <!--    AOP 포인트컷 빈 -->
 <!--    <bean id="transactionPointcut" class="user.service.NameMatchClassMethodPointcut">-->
@@ -54,9 +91,9 @@
 <!--    </bean>-->
 
 <!--    포인트컷 표현식을 사용한 빈 설정 -->
-    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
-        <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))"/>
-    </bean>
+<!--    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">-->
+<!--        <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))"/>-->
+<!--    </bean>-->
 
 <!--    프록시 팩토리 빈을 제거한 후의 빈 설정 -->
     <bean id="userService" class="user.service.UserServiceImpl">
@@ -69,14 +106,10 @@
 <!--        <property name="mailSender" ref="mailSender"/>-->
 <!--    </bean>-->
 
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-
 <!--    트랜잭션 어드바이스 빈 설정 -->
-    <bean id="transactionAdvice" class="user.service.TransactionAdvice">
-        <property name="transactionManager" ref="transactionManager"/>
-    </bean>
+<!--    <bean id="transactionAdvice" class="user.service.TransactionAdvice">-->
+<!--        <property name="transactionManager" ref="transactionManager"/>-->
+<!--    </bean>-->
 
 <!--    포인트컷 빈 설정 -->
 <!--    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">-->
@@ -84,10 +117,10 @@
 <!--    </bean>-->
 
 <!--    어드바이저 빈 설정 -->
-    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-        <property name="advice" ref="transactionAdvice"/>
-        <property name="pointcut" ref="transactionPointcut"/>
-    </bean>
+<!--    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">-->
+<!--        <property name="advice" ref="transactionAdvice"/>-->
+<!--        <property name="pointcut" ref="transactionPointcut"/>-->
+<!--    </bean>-->
 
     <bean id="userDao" class="user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
@@ -99,7 +132,7 @@
 
 <!--    테스트용 UserService 의 등록 -->
 <!--    스태틱 멤버 클래스는 $로 지정한다. / 프로퍼티 정의를 포함해서 userService 빈의 설정을 상속받는다. -->
-    <bean id="testUserService" class="user.service.UserServiceTest$TestUserServiceImpl" parent="userService"/>
+    <bean id="testUserService" class="user.service.UserServiceTest$TestUserService" parent="userService"/>
 
     <bean id="mailSender" class="user.service.DummyMailSender">
         <property name="host" value="mail.server.com"/>
